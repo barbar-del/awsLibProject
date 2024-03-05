@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delicious Bakery</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Delicious Bakery {{object}}</h1>
+        <p>Freshly baked treats every day!</p>
+    </header>
+    <nav>
+        <a href="#">Home</a> |
+        <a href="#">About Us</a> |
+        <a href="#">Our Products</a> |
+        <a href="#">Contact</a>
+    </nav>
+    <main>
+        <h2>Welcome to Delicious Bakery</h2>
+        <p>We offer a variety of freshly baked goods, including bread, cakes, pastries, and more. Visit us for a delicious treat!</p>
+        <img src="https://media.istockphoto.com/id/1370529871/photo/chefs-hands-spraying-flour-over-the-dough.jpg?s=612x612&w=0&k=20&c=X6XQjuwHHokbf3CLJh5e9k1x01VPGJb1Spbe3WcpKO4=" alt="Display of various baked goods" width="400">
+    </main>
+    <footer>
+        &copy; 2024 Delicious Bakery. All rights reserved.
+    </footer>
+</body>
+</html>
