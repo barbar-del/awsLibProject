@@ -1,16 +1,16 @@
 from flask import Flask, render_template
-from configs.DBconnect import db
+from configs.DBconnect import init_db
 from models.user import User
 
 app = Flask(__name__)
 
 # Configure database connection
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://admin:1234567890@librarydb.cbukmucwgnnr.us-east-1.rds.amazonaws.com:3306/awsLibrary'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:1234567890@127.0.0.1:3306/awspro'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 
 # Initialize the database connection
-db.init_app(app)
+init_db(app)
 
 # Define your routes below
 
