@@ -1,8 +1,9 @@
+drop table IF EXISTS loan_log;
+drop table IF EXISTS loaned_books;
 drop table IF EXISTS users;
 drop table IF EXISTS books;
 drop table IF EXISTS genre;
-drop table IF EXISTS loan_log;
-drop table IF EXISTS loaned_books;
+
 -- ===========================  ==================================
 
 -- 2 user types: librarian(admin), regular user
@@ -27,9 +28,17 @@ drop table IF EXISTS loaned_books;
 CREATE TABLE users (
   email VARCHAR(255) PRIMARY KEY,
   full_name varchar(255) NOT NULL,
-  pass VARCHAR(255) NOT NULL,
+  password VARCHAR(255) NOT NULL,
   CHECK (email LIKE '_%@_%._%')
   );
+
+insert into users (email,full_name,password) values
+('barbar11@rty.com','bar yadgar1','1234561'),
+('barbar12@rty.com','bar yadgar2','1234562'),
+('barbar13@rty.com','bar yadgar3','1234563'),
+('barbar14@rty.com','bar yadgar4','1234564');
+
+select * from users;
 
 -- Create table for book genres with name as the primary key
 CREATE TABLE genre (
@@ -45,6 +54,7 @@ CREATE TABLE books (
   stock_amount INT,
   FOREIGN KEY (genre_name) REFERENCES genre(name)
 );
+
 
 -- Create table for loan logs
 CREATE TABLE loan_log (
@@ -75,6 +85,26 @@ INSERT INTO genre (name) VALUES ('Non-Fiction');
 INSERT INTO genre (name) VALUES ('Mystery');
 INSERT INTO genre (name) VALUES ('Sci-Fi');
 INSERT INTO genre (name) VALUES ('Fantasy');
+
+select * from genre;
+-- =========================== insert users ======================================
+insert into users (email,full_name,password) values
+('barbar11@rty.com','bar yadgar1','1234561'),
+('barbar12@rty.com','bar yadgar2','1234562'),
+('barbar13@rty.com','bar yadgar3','1234563'),
+('barbar14@rty.com','bar yadgar4','1234564');
+
+select * from users;
+
+-- =========================== insert books ======================================
+
+insert into books (book_name,author_name,genre_name,stock_amount) values
+('alibaba','barbur','Mystery',5),
+('minime','barbur2','Fantasy',2),
+('alibaba','barbur2','Fantasy',6),
+('sodastream','barbur','Fantasy',1);
+
+select * from books;
 
 -- -- =========================== end inserts ===================================
 
@@ -350,42 +380,42 @@ END //
 DELIMITER ;
 
 -- ----------------------------------------
-
--- -------DEPENDS IF WE USE LOAN_LOG TABLE-------------------
-
--- DEPENDS IF WE USE LOAN_LOG TABLE
-
--- Trigger for inserting new loan logs
-CREATE TRIGGER UpdateIsLoanedOnLoanLogInsert
-ON loan_log
-AFTER INSERT
-AS
-BEGIN
-    SET NOCOUNT ON;
-    UPDATE books
-    SET is_loaned = 1
-    WHERE book_id IN (SELECT book_id FROM inserted);
-END;
-
-------------------------------------------
-
--- DEPENDS IF WE USE LOAN_LOG TABLE
-
-
--- Trigger for updating loan logs
-CREATE TRIGGER UpdateIsLoanedOnLoanLogUpdate
-ON loan_log
-AFTER UPDATE
-AS
-BEGIN
-    SET NOCOUNT ON;
-    UPDATE books
-    SET is_loaned = CASE 
-                       WHEN i.is_returned = 1 THEN 0
-                       ELSE 1
-                   END
-    FROM inserted i
-    WHERE books.book_id = i.book_id;
-END;
-
------------------------------------------
+-- 
+-- -- -------DEPENDS IF WE USE LOAN_LOG TABLE-------------------
+-- 
+-- -- DEPENDS IF WE USE LOAN_LOG TABLE
+-- 
+-- -- Trigger for inserting new loan logs
+-- CREATE TRIGGER UpdateIsLoanedOnLoanLogInsert
+-- ON loan_log
+-- AFTER INSERT
+-- AS
+-- BEGIN
+--     SET NOCOUNT ON;
+--     UPDATE books
+--     SET is_loaned = 1
+--     WHERE book_id IN (SELECT book_id FROM inserted);
+-- END;
+-- 
+-- ------------------------------------------
+-- 
+-- -- DEPENDS IF WE USE LOAN_LOG TABLE
+-- 
+-- 
+-- -- Trigger for updating loan logs
+-- CREATE TRIGGER UpdateIsLoanedOnLoanLogUpdate
+-- ON loan_log
+-- AFTER UPDATE
+-- AS
+-- BEGIN
+--     SET NOCOUNT ON;
+--     UPDATE books
+--     SET is_loaned = CASE 
+--                        WHEN i.is_returned = 1 THEN 0
+--                        ELSE 1
+--                    END
+--     FROM inserted i
+--     WHERE books.book_id = i.book_id;
+-- END;
+-- 
+-- -----------------------------------------
