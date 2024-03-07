@@ -154,6 +154,7 @@ DELIMITER //
 
 CREATE PROCEDURE SignupUser (
     IN signup_email VARCHAR(255),
+    IN new_user_name VARCHAR(255),
     IN signup_password VARCHAR(255),
     OUT signup_status BOOLEAN,
     OUT error_message VARCHAR(255)
@@ -170,7 +171,7 @@ BEGIN
         SET error_message = 'Email already exists'; -- Set error message
     ELSE
         -- Insert the new user
-        INSERT INTO users (email, password) VALUES (signup_email, signup_password);
+        INSERT INTO users (email, full_name, user_password) VALUES (signup_email, new_user_name, signup_password);
         SET signup_status = TRUE; -- Set signup status to true
         SET error_message = NULL; -- No error message
     END IF;
