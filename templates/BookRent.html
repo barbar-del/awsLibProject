@@ -1,6 +1,14 @@
-<h1> suppppp</h1>
-        </div>
-        <div class="col-md-4">
-            <h1> suppppp</h1>
-        </div>
-    </div>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Users List</title>
+</head>
+<body>
+    <h1>Users List</h1>
+    <ul>
+        {% for book in books %}
+            <li>{{ book.book_id }} - {{ book.book_name }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

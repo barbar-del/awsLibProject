@@ -9,23 +9,25 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='auth/auth.css') }}">
 </head>
 <body>
+    <input type="hidden" id="error-message" value="{{ error|default('') }}">
+
     <div class="container">
         <div class="row">
             <div class="col-md-12">
                 <div class="wrapper">
                     <div class="form" id="form1">
                         <div class="title">Login</div>
-                        <form action="#" class="loginForm">
+                        <form action="/login" method="post" class="loginForm">
                             <div class="profileImage">
                                 <i class="fa fa-user-circle-o" aria-hidden="true"></i>
                             </div>
                             <div class="form-group">
                                 <i class="fa fa-envelope form-icon"></i>
-                                <input type="email" class="form-control" id="email" placeholder="Email">
+                                <input type="email" name="logemail" class="form-control" id="email" placeholder="Email">
                             </div>
                             <div class="form-group">
                                 <i class="fa fa-lock form-icon"></i>
-                                <input type="password" class="form-control" id="pwd" placeholder="Password">
+                                <input type="password" name="logpass" class="form-control" id="pwd" placeholder="Password">
                             </div>
                             <button type="submit" class="btn btn-default">login</button>
                         </form>

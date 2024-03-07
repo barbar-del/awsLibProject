@@ -1,12 +1,12 @@
-from flask import Flask, render_template
-from configs.DBconnect import init_db
-from models.user import User
+from flask import Flask, redirect, render_template, request
+from configs.DBconnect import init_db, login_user
+from models.user import Users
+from models.books import Books
 
 app = Flask(__name__)
 
 # Configure database connection
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:1234567890@127.0.0.1:3306/awspro'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
 
 
 # Initialize the database connection
@@ -16,7 +16,7 @@ init_db(app)
 
 @app.route('/users')
 def show_users():
-    users = User.query.all()
+    users = Users.query.all()
     return render_template('users.html', users=users)
 
 @app.route('/1')
@@ -33,7 +33,25 @@ def lib():
 
 @app.route('/rent a book')
 def book_rent():
-    return render_template('BookRent.html')
+    books = Books.query.all()
+    return render_template('BookRent.html', books=books)
+
+@app.route('/user/<email>')
+def profile(email):
+    return f'{email}\'s profile'
+
+
+#handle the login form submission, and redirect to the user profile in case of success
+# or to 
+@app.route('/login', methods=['POST'])
+def login():
+    email = request.form['logemail']
+    password = request.form['logpass']
+    login_status, error_message = login_user(email, password)
+    if login_status:
+        return redirect('/user/' + email)
+    else:
+        return render_template('auth.html', error=error_message)
 
 # flask --app main run --debug
 if __name__ == '__main__':
