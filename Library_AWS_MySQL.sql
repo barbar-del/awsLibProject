@@ -179,6 +179,10 @@ END //
 
 DELIMITER ;
 
+CALL SignupUser('ran_test@test.com', 'ran test', '111', @signup_status, @error_message);
+select @error_message
+select * from users
+	
 -- ------------------------------------------------------------
 
 -- PROCEDURE TO RESET USER PASSWORD
