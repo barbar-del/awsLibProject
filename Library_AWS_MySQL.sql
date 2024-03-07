@@ -315,18 +315,19 @@ CALL ReturnBook('barbar11@rty.com@test.com',4);
 -- ------------------------------------------------------------
 
 -- PROCDURE TO SHOW BOOKS LOANED BY SPECIFIC USER
-
 DELIMITER //
 
 CREATE PROCEDURE ShowUserLoanedBooks (
-    IN user_email VARCHAR(255)
+    IN show_user_email_loaned VARCHAR(255)
 )
 BEGIN
     -- Select all books loaned by the specified user
-    SELECT * FROM loaned_books WHERE user_mail = user_email;
+    SELECT * FROM loaned_books WHERE loan_user_mail = show_user_email_loaned;
 END //
 
 DELIMITER ;
+
+CALL ShowUserLoanedBooks('ran_test@test.com');
 
 -- =============================== ADMIN PROCEDURES ===============================
 
@@ -344,21 +345,21 @@ BEGIN
     DECLARE book_exists INT;
     
     -- Check if the book exists
-    SELECT COUNT(*) INTO book_exists FROM books WHERE book_name = new_book_name AND author_name = new_author_name;
+    SELECT COUNT(*) INTO book_exists FROM books WHERE book_name = new_book_name AND book_author_name = new_author_name;
     
     -- If the book exists, update the stock amount
     IF book_exists > 0 THEN
-        UPDATE books SET stock_amount = stock_amount + new_stock_amount WHERE book_name = new_book_name AND author_name = new_author_name;
+        UPDATE books SET book_stock_amount = book_stock_amount + new_stock_amount WHERE book_name = new_book_name AND author_name = new_author_name;
         
     ELSE
         -- If the book doesn't exist, insert the new book
-        INSERT INTO books (book_name, author_name, genre_name, stock_amount) VALUES (new_book_name, new_author_name, new_genre_name, new_stock_amount);
+        INSERT INTO books (book_name, book_author_name, book_genre_name, book_stock_amount) VALUES (new_book_name, new_author_name, new_genre_name, new_stock_amount);
     END IF;
 END //
 
 DELIMITER ;
 
-CALL AddBook('Book1', 'Authour1', 'Mystery', 57);
+CALL AddBook('Book1', 'Author1', 'Mystery', 57);
 select * from books
 -- ------------------------------------
 
@@ -369,11 +370,12 @@ DELIMITER //
 CREATE PROCEDURE ShowLoanedBooks ()
 BEGIN
     -- Select all unique loaned books
-    SELECT DISTINCT book_id FROM loaned_books;
+    SELECT DISTINCT loaned_book_id FROM loaned_books;
 END //
 
 DELIMITER ;
 
+CALL ShowLoanedBooks();
 -- ----------------------------------------
 
 -- PROCEDURE TO REMOVE USER
@@ -384,23 +386,33 @@ CREATE PROCEDURE RemoveUser (
     IN remove_user_email VARCHAR(255)
 )
 BEGIN
+    DECLARE user_exists INT;
     DECLARE loaned_book_count INT;
     
-    -- Check if the user has loaned books
-    SELECT COUNT(*) INTO loaned_book_count FROM loaned_books WHERE user_mail = remove_user_email;
+    -- Check if the user exists
+    SELECT COUNT(*) INTO user_exists FROM users WHERE user_email = remove_user_email;
     
-    IF loaned_book_count = 0 THEN
-        -- Remove user
-        DELETE FROM users WHERE email = remove_user_email;
+    IF user_exists > 0 THEN
+        -- Check if the user has loaned books
+        SELECT COUNT(*) INTO loaned_book_count FROM loaned_books WHERE loan_user_mail = remove_user_email;
         
-        SELECT 'User removed successfully.' AS message;
+        IF loaned_book_count = 0 THEN
+            -- Remove user
+            DELETE FROM users WHERE user_email = remove_user_email;
+            
+            SELECT 'User removed successfully.' AS message;
+        ELSE
+            SELECT 'User has loaned books. Cannot remove user.' AS message;
+        END IF;
     ELSE
-        SELECT 'User has loaned books. Cannot remove user.' AS message;
+        SELECT 'User does not exist.' AS message;
     END IF;
 END //
 
 DELIMITER ;
 
+select * from users;
+CALL RemoveUser('barbar11@rty.com');
 -- ----------------------------------------
 -- 
 -- -- -------DEPENDS IF WE USE LOAN_LOG TABLE-------------------
