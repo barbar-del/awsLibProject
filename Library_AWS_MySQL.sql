@@ -55,18 +55,6 @@ create table loaned_books(
 	FOREIGN KEY (loan_user_mail) REFERENCES users(user_email)
 );
 
--- Create table for loan logs
-CREATE TABLE loan_log (
-  id INT PRIMARY KEY AUTO_INCREMENT,
-  book_id INT,
-  email VARCHAR(255),
-  loan_date DATETIME,
-  loan_return_date DATETIME,
-  is_returned BIT NOT NULL DEFAULT 0,
-  FOREIGN KEY (book_id) REFERENCES books(book_id),
-  FOREIGN KEY (email) REFERENCES users(email) ON DELETE CASCADE ON UPDATE CASCADE
-);
-
 -- =========================== end create tables ==================================
 
 -- =========================== insert genres ======================================
@@ -413,43 +401,3 @@ DELIMITER ;
 
 select * from users;
 CALL RemoveUser('barbar11@rty.com');
--- ----------------------------------------
--- 
--- -- -------DEPENDS IF WE USE LOAN_LOG TABLE-------------------
--- 
--- -- DEPENDS IF WE USE LOAN_LOG TABLE
--- 
--- -- Trigger for inserting new loan logs
--- CREATE TRIGGER UpdateIsLoanedOnLoanLogInsert
--- ON loan_log
--- AFTER INSERT
--- AS
--- BEGIN
---     SET NOCOUNT ON;
---     UPDATE books
---     SET is_loaned = 1
---     WHERE book_id IN (SELECT book_id FROM inserted);
--- END;
--- 
--- ------------------------------------------
--- 
--- -- DEPENDS IF WE USE LOAN_LOG TABLE
--- 
--- 
--- -- Trigger for updating loan logs
--- CREATE TRIGGER UpdateIsLoanedOnLoanLogUpdate
--- ON loan_log
--- AFTER UPDATE
--- AS
--- BEGIN
---     SET NOCOUNT ON;
---     UPDATE books
---     SET is_loaned = CASE 
---                        WHEN i.is_returned = 1 THEN 0
---                        ELSE 1
---                    END
---     FROM inserted i
---     WHERE books.book_id = i.book_id;
--- END;
--- 
--- -----------------------------------------
