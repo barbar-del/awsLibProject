@@ -7,7 +7,7 @@
     <h1>Users List</h1>
     <ul>
         {% for book in books %}
-            <li>{{ book.book_id }} - {{ book.book_name }}</li>
+            <li>{{ book.book_id }} - {{ book.book_name }}-{{book.book_author_name}}</li>
         {% endfor %}
     </ul>
 </body>

@@ -1,5 +1,5 @@
 from flask import Flask, redirect, render_template, request
-from configs.DBconnect import init_db, login_user, SignupUser, show_available_books, LoanBook
+from configs.DBconnect import ShowUserLoanedBooks, init_db, login_user, SignupUser, show_available_books
 from models.user import Users
 from models.books import Books
 
@@ -14,31 +14,42 @@ init_db(app)
 
 # Define your routes below
 
+#for debughing, remove later
 @app.route('/users')
 def show_users():
     users = Users.query.all()
     return render_template('users.html', users=users)
 
-@app.route('/1')
+
+#for debughing, remove later
+@app.route('/')
 def home():
     return render_template('home.html')
 
+#registration from, latter will be change to  a path of '/' so it will be the default page
 @app.route('/auth')
 def auth():
     return render_template('auth.html')
+
 
 @app.route('/lib')
 def lib():
     return render_template('lib.html')
 
-@app.route('/rent a book')
-def book_rent():
+
+@app.route('/rent/<mail>')
+def book_rent(mail):
     available_books = show_available_books()
+    print(mail)
     return render_template('BookRent.html', books=available_books)
 
-@app.route('/user/<email>')
-def profile(email):
-    return f'{email}\'s profile'
+
+@app.route('/return/<mail>')
+def returnbook(mail):
+    rentedBooks = ShowUserLoanedBooks(mail)
+    print(mail)
+    return render_template('returnBook.html', books=rentedBooks)
+
 
 
 #handle the login form submission, and redirect to the user profile in case of success

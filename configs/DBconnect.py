@@ -6,10 +6,10 @@ db = SQLAlchemy()
 def init_db(app):
     
     # bar sql
-    # app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:1234567890@localhost/awspro'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:1234567890@localhost/awspro'
     
     # ran sql
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:T9QF1X@localhost/library_aws'
+    #app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:T9QF1X@localhost/library_aws'
     
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.init_app(app)
@@ -62,14 +62,24 @@ def show_available_books():
     finally:
         cursor.close()
         connection.close()
-        
-def LoanBook(email,book_id):
+    
+def ShowUserLoanedBooks(mail):
+    from models.books import Books  # Import Books model here
+
     connection = db.engine.raw_connection()
     try:
         cursor = connection.cursor()
-        cursor.callproc('LoanBook',[email,book_id])
-        return 
+        cursor.callproc('ShowUserLoanedBooks', [mail])
+        result = cursor.fetchall()
+        available_books = []
+        for book_data in result:
+            book = Books.query.filter_by(book_id=book_data[0]).first()
+            if book is None:
+                # Create a new Books instance if it doesn't exist
+                book = Books(book_id=book_data[0], book_name=book_data[1], book_author_name=book_data[2],
+                                book_genre_name=book_data[3], book_stock_amount=book_data[4])
+            available_books.append(book)
+        return available_books
     finally:
         cursor.close()
         connection.close()
-        

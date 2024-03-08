@@ -265,6 +265,7 @@ select * from users;
 select * from books;
 select * from loaned_books;
 -- LOAN A BOOK
+call LoanBook('barbar11@rty.com',3,@a,@B);
 CALL LoanBook('ran_test@test.com',4);
 CALL LoanBook('ran_test@test.com',2);
 CALL LoanBook('ran_test@test.com',2);
@@ -322,12 +323,14 @@ CREATE PROCEDURE ShowUserLoanedBooks (
 )
 BEGIN
     -- Select all books loaned by the specified user
-    SELECT * FROM loaned_books WHERE loan_user_mail = show_user_email_loaned;
+    SELECT * FROM books b
+    join loaned_books lb on lb.loaned_book_id= b.book_id
+    where lb.loan_user_mail= show_user_email_loaned;
 END //
 
 DELIMITER ;
 
-CALL ShowUserLoanedBooks('ran_test@test.com');
+CALL ShowUserLoanedBooks('barbar11@rty.com');
 
 -- =============================== ADMIN PROCEDURES ===============================
 
