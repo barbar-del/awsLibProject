@@ -154,8 +154,12 @@ BEGIN
     IF signup_email REGEXP '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$' 
     THEN
         SET valid_email_format = TRUE; -- Set to TRUE if email matches the format
-	ELSE
-		SET signup_status_message = 'Email is not in correct format!';
+	END IF;
+    
+    IF NOT valid_email_format THEN
+        SET signup_status = FALSE;
+        SET signup_status_message = 'Invalid email format';
+        LEAVE SignupUser; -- Exit the procedure
     END IF;
     
     -- Check if the email exists
