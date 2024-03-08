@@ -136,7 +136,7 @@ select * from users
 -- PROCDURE TO SIGN UP USER
 
 DELIMITER //
-
+	
 CREATE PROCEDURE SignupUser (
     IN signup_email VARCHAR(255),
     IN new_user_name VARCHAR(255),
@@ -146,39 +146,32 @@ CREATE PROCEDURE SignupUser (
 )
 BEGIN
     DECLARE user_count INT;
-    DECLARE valid_email_format BOOLEAN;
     
     -- Check if the email matches the desired format
-    SET valid_email_format = FALSE; -- Assume invalid format by default
+   -- SET valid_email_format = FALSE; -- Assume invalid format by default
     
-    IF signup_email REGEXP '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$' 
+    IF signup_email NOT LIKE '_%@_%._%'
     THEN
-        SET valid_email_format = TRUE; -- Set to TRUE if email matches the format
-	END IF;
-    
-    IF NOT valid_email_format THEN
-        SET signup_status = FALSE;
-        SET signup_status_message = 'Invalid email format';
-        LEAVE SignupUser; -- Exit the procedure
-    END IF;
-    
-    -- Check if the email exists
-    SELECT COUNT(*) INTO user_count FROM users WHERE user_email = signup_email;
-    
-    -- If the email exists
-    IF user_count > 0 THEN
-        SET signup_status = FALSE; -- Set signup status to false
-        SET signup_status_message = 'Email already exists'; -- Set error message
+		SET signup_status = FALSE;
+		SET signup_status_message = 'Invalid email format';
     ELSE
-        -- Insert the new user
-        INSERT INTO users (user_email, user_full_name, user_password) VALUES (signup_email, new_user_name, signup_password);
-        SET signup_status = TRUE; -- Set signup status to true
-        SET signup_status_message = 'Signed up successfuly!';
+		-- Check if the email exists
+		SELECT COUNT(*) INTO user_count FROM users WHERE user_email = signup_email;
+		
+		-- If the email exists
+		IF user_count > 0 THEN
+			SET signup_status = FALSE; -- Set signup status to false
+			SET signup_status_message = 'Email already exists'; -- Set error message
+		ELSE
+			-- Insert the new user
+			INSERT INTO users (user_email, user_full_name, user_password) VALUES (signup_email, new_user_name, signup_password);
+			SET signup_status = TRUE; -- Set signup status to true
+			SET signup_status_message = 'Signed up successfuly!';
+		END IF;
     END IF;
 END //
-
+	
 DELIMITER ;
-
 CALL SignupUser('ran_test444@test.com', 'ran444 test444', '444', @signup_status, @signup_status_message);
 select @signup_status, @signup_status_message;
 
