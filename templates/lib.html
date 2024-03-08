@@ -22,13 +22,13 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('home') }}">Home</a>
+                        <a class="nav-link" href="{{ url_for('lib',email=email)}}">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('book_rent') }}">Book Rent</a>
+                        <a class="nav-link" href="{{ url_for('lib',email=email)}}">Book Rent</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('show_users') }}">Users</a>
+                        <a class="nav-link" href="{{ url_for('lib',email=email)}}">Users</a>
                     </li>
                 </ul>
             </div>
@@ -74,7 +74,7 @@
             <span class="sr-only">Next</span>
         </a>
     </div>
-
+    <h1>{{xxx}}</h1>
     <!-- Welcome Sign -->
     <div class="container my-5">
         <div class="jumbotron">
@@ -82,7 +82,7 @@
             <p class="lead">Discover a world of knowledge and imagination within our walls.</p>
             <hr class="my-4">
             <p>Browse our extensive collection, rent your favorite books, and connect with fellow book lovers.</p>
-            <a class="btn btn-primary btn-lg" href="{{ url_for('book_rent') }}" role="button">Rent a Book</a>
+            <a class="btn btn-primary btn-lg" href="{{ url_for('lib',email=email)}}" role="button">Rent a Book</a>
         </div>
     </div>
 

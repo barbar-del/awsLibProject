@@ -1,4 +1,4 @@
-from flask import Flask, redirect, render_template, request
+from flask import Flask, redirect, render_template, request, url_for
 from configs.DBconnect import ShowUserLoanedBooks, init_db, login_user, SignupUser, show_available_books
 from models.user import Users
 from models.books import Books
@@ -21,27 +21,20 @@ def show_users():
     return render_template('users.html', users=users)
 
 
-#for debughing, remove later
-@app.route('/')
-def home():
-    return render_template('home.html')
 
 #registration from, latter will be change to  a path of '/' so it will be the default page
-@app.route('/auth')
+@app.route('/')
 def auth():
     return render_template('auth.html')
 
 
-@app.route('/lib')
-def lib():
-    return render_template('lib.html')
 
 
 @app.route('/rent/<mail>')
-def book_rent(mail):
+def book_rent(email):
     available_books = show_available_books()
-    print(mail)
-    return render_template('BookRent.html', books=available_books)
+    print(email)
+    return render_template('BookRent.html', books=available_books, email=email)
 
 
 @app.route('/return/<mail>')
@@ -50,6 +43,9 @@ def returnbook(mail):
     print(mail)
     return render_template('returnBook.html', books=rentedBooks)
 
+@app.route('/lib/<email>')
+def lib(email):
+    return render_template('lib.html',email=email)
 
 
 #handle the login form submission, and redirect to the user profile in case of success
@@ -60,7 +56,7 @@ def login():
     password = request.form['logpass']
     login_status, error_message = login_user(email, password)
     if login_status:
-        return redirect('/user/' + email)
+        return redirect(url_for('lib',email=email))
     else:
         return render_template('auth.html', error=error_message)
 
