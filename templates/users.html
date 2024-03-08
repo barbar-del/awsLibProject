@@ -1,14 +1,53 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Users List</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>User Page</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='users_style.csss') }}">
 </head>
 <body>
-    <h1>Users List</h1>
-    <ul>
-        {% for user in users %}
-            <li>{{ user.user_email }} - {{ user.user_full_name }}</li>
-        {% endfor %}
-    </ul>
+
+<div class="container">
+    <div class="column">
+        <div class="title">My Books</div>
+        <select class="form-group" id="myBooks">
+            <!-- call to procedure to show user books -->
+        </select>
+        <button class="button">Return Book</button>
+    </div>
+    <div class="column">
+        <div class="title">Library Books</div>
+        <select class="form-group" id="libraryBooks">
+            <!-- Populate with options if needed -->
+            <!-- call to procedure to show available books -->
+        </select>
+        <button class="button">Loan Book</button>
+    </div>
+</div>
+
+<div class="title">Search Book</div>
+<div class="container">
+    <div class="column">
+        <div class="form-group">
+            <label for="bookName">Book Name:</label>
+            <input type="text" id="bookName">
+        </div>
+        <div class="form-group">
+            <label for="authorName">Author Name:</label>
+            <input type="text" id="authorName">
+        </div>
+    </div>
+    <div class="column">
+        <div class="form-group">
+            <label for="genre">Genre:</label>
+            <select id="genre">
+                <!--  get genres from DB -->
+            </select>
+        </div>
+        <button class="button">Search</button>
+    </div>
+</div>
+
 </body>
 </html>
