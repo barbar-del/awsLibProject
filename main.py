@@ -1,5 +1,5 @@
 from flask import Flask, redirect, render_template, request
-from configs.DBconnect import init_db, login_user
+from configs.DBconnect import init_db, login_user, SignupUser
 from models.user import Users
 from models.books import Books
 
@@ -52,6 +52,30 @@ def login():
         return redirect('/user/' + email)
     else:
         return render_template('auth.html', error=error_message)
+
+
+#handle the login form submission, and redirect to the user profile in case of success
+# or to 
+@app.route('/signup', methods=['POST'])
+def signup():
+    email :str = request.form['signEmail']
+    password :str = request.form['signPass']
+    repassword :str = request.form['signRePass']
+    name :str = request.form['signName']
+    print(email, password, repassword, name)
+    if len(email) == 0 or len(password) == 0 or len(repassword) == 0 or len(name) == 0:
+        return render_template('auth.html', error="All fields are required")
+    if password != repassword:
+        return render_template('auth.html', error="Password and re-password do not match")
+    login_status, error_message = SignupUser(email,name, password)
+    if login_status:
+        return redirect('/user/' + email)
+    else:
+        return render_template('auth.html', error=error_message)
+
+
+
+
 
 # flask --app main run --debug
 if __name__ == '__main__':

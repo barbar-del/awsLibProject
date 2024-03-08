@@ -298,8 +298,8 @@ select * from loaned_books;
 CALL ReturnBook('ran_test@test.com',4);
 CALL ReturnBook('ran_test@test.com',2);
 CALL ReturnBook('ran_test@test.com',4);
-CALL LoanBook('barbar11@rty.com@test.com',4); -- problem with loaning book: doesn't write to loaned_books table because of a constraint but book_stock_amount decreases.
-CALL ReturnBook('barbar11@rty.com@test.com',4);
+CALL LoanBook('barbar11@rty.com',4); -- problem with loaning book: doesn't write to loaned_books table because of a constraint but book_stock_amount decreases.
+CALL ReturnBook('barbar11@rty.com',4);
 -- ------------------------------------------------------------
 
 -- PROCDURE TO SHOW BOOKS LOANED BY SPECIFIC USER

@@ -22,3 +22,27 @@ def login_user(email, password):
     finally:
         cursor.close()
         connection.close()
+
+def SignupUser(email,name,password):
+    connection = db.engine.raw_connection()
+    try:
+        cursor = connection.cursor()
+        cursor.callproc('SignupUser', [email,name,password, None, None])
+        connection.commit()  # Make sure to commit the transaction
+        cursor.execute("SELECT @_SignupUser_3, @_SignupUser_4")  # Fetch the OUT parameters of the 2 and 3 index
+        signUpStatus, error_message = cursor.fetchone()
+        return signUpStatus, error_message
+    finally:
+        cursor.close()
+        connection.close()
+        
+def show_available_books():
+    connection = db.engine.raw_connection()
+    try:
+        cursor = connection.cursor()
+        cursor.callproc('ShowAvailableBooks')
+        books = cursor.fetchall()
+        return books
+    finally:
+        cursor.close()
+        connection.close()
