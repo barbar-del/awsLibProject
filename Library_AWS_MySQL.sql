@@ -146,6 +146,21 @@ CREATE PROCEDURE SignupUser (
 )
 BEGIN
     DECLARE user_count INT;
+    DECLARE valid_email_format BOOLEAN;
+    
+    -- Check if the email matches the desired format
+    SET valid_email_format = FALSE; -- Assume invalid format by default
+    
+    IF signup_email REGEXP '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$' 
+    THEN
+        SET valid_email_format = TRUE; -- Set to TRUE if email matches the format
+	END IF;
+    
+    IF NOT valid_email_format THEN
+        SET signup_status = FALSE;
+        SET signup_status_message = 'Invalid email format';
+        LEAVE SignupUser; -- Exit the procedure
+    END IF;
     
     -- Check if the email exists
     SELECT COUNT(*) INTO user_count FROM users WHERE user_email = signup_email;
