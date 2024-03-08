@@ -10,18 +10,18 @@ drop table IF EXISTS genre;
 -- TO DO LIST:
 -- DONE -- 1. update tables to match mysql
 -- 2. update procedures to match mysql:
--- DONE 83 -- all users:	a. log in: check if email and password exists and match - return true/false
--- DONE 121 -- regular:    	b. sign up: check if email exists - if true - user exists, if false user not exist and create user.
--- DONE 183 -- all users:	c. show all available books: return all books with stock > 0
--- DONE 313 -- admin:		d. show all loaned books.
--- DONE 268 -- all users:	e. show user loaned books (per email).
--- DONE 197 -- regular:    	f. loan book: procudre to update stock amount and add value to loaned_books table (user mail and book id)
+-- DONE 96 -- all users:	a. log in: check if email and password exists and match - return true/false
+-- DONE 140 -- regular:    	b. sign up: check if email exists - if true - user exists, if false user not exist and create user.
+-- DONE 213 -- all users:	c. show all available books: return all books with stock > 0
+-- DONE 380 -- admin:		d. show all loaned books.
+-- DONE 320 -- all users:	e. show user loaned books (per email).
+-- DONE 227 -- regular:    	f. loan book: procudre to update stock amount and add value to loaned_books table (user mail and book id)
 -- 								note: don't let user loan more than 1 copy
--- DONE 237-- regular:		g. return book: procudre to update stock amount and remove value from loaned_books table (user mail and book id)
+-- DONE 279-- regular:		g. return book: procudre to update stock amount and remove value from loaned_books table (user mail and book id)
 -- 								note: check what we need to do if user has more than 1 copy of the same book.
--- DONE 288 -- admin:		h. add book: check if book exists (name, author genre) if true add to stock_amount if false add new.
--- DONE 329 -- admin:		i. remove user: check if user has no loaned books and remove.
--- DONE 153 -- all users:	j. reset password (per user)
+-- DONE 338 -- admin:		h. add book: check if book exists (name, author genre) if true add to stock_amount if false add new.
+-- DONE 394 -- admin:		i. remove user: check if user has no loaned books and remove.
+-- DONE 177 -- all users:	j. reset password (per user)
 
 -- ===========================  ==================================
 
@@ -176,7 +176,10 @@ DELIMITER //
 
 CREATE PROCEDURE ResetPassword (
     IN reset_user_email VARCHAR(255),
-    IN new_password VARCHAR(255)
+    IN new_password VARCHAR(255),
+    OUT reset_password_status BOOLEAN,
+    OUT reset_password_message VARCHAR(255)
+    
 )
 BEGIN
     DECLARE user_exists INT;
@@ -187,15 +190,17 @@ BEGIN
     IF user_exists > 0 THEN
         -- Update user's password
         UPDATE users SET user_password = new_password WHERE user_email = reset_user_email;
-        SELECT 'Password reset successfully.' AS message;
+		SET reset_password_status = FALSE;
+        SET reset_password_message = 'Password reset successfully.' ;
     ELSE
-        SELECT 'User does not exist.' AS message;
+        SET reset_password_status = FALSE;
+        SET reset_password_message = 'User does not exist.' ;
     END IF;
 END //
 
 DELIMITER ;
 
-CALL ResetPassword('ran_test444@test.com', '999');
+CALL ResetPassword('ran_test444@test.com', '999',  @reset_password_status, @reset_password_message);
 select* from users;
 -- =========================================================================== 
 
@@ -221,7 +226,9 @@ DELIMITER //
 
 CREATE PROCEDURE LoanBook (
     IN current_user_email VARCHAR(255),
-    IN current_book_id INT
+    IN current_book_id INT,
+	OUT LoanBook_status BOOLEAN,
+    OUT LoanBook_message VARCHAR(255)
 )
 BEGIN
     DECLARE current_stock INT;
@@ -231,7 +238,8 @@ BEGIN
     SELECT COUNT(*) INTO user_has_book FROM loaned_books WHERE loan_user_mail = current_user_email AND loaned_book_id = current_book_id;
     
     IF user_has_book > 0 THEN
-        SELECT 'User already has a copy of this book.' AS message;
+		SET LoanBook_status = FALSE;
+        SET LoanBook_message = 'User already has a copy of this book.' ;
     ELSE
         -- Check current stock amount
         SELECT book_stock_amount INTO current_stock FROM books WHERE book_id = current_book_id;
@@ -242,10 +250,11 @@ BEGIN
             UPDATE books SET book_stock_amount = book_stock_amount - 1 WHERE book_id = current_book_id;
             -- Add entry to loaned_books table
             INSERT INTO loaned_books (loan_user_mail, loaned_book_id) VALUES (current_user_email, current_book_id);
-            
-            SELECT 'Book loaned successfully.' AS message;
+            SET LoanBook_status = TRUE;
+			SET LoanBook_message = 'Book loaned successfully.';
         ELSE
-            SELECT 'Book not available for loan.' AS message;
+            SET LoanBook_status = FALSE;
+			SET LoanBook_message = 'Book not available for loan.';
         END IF;
     END IF;
 END //
@@ -269,7 +278,9 @@ DELIMITER //
 
 CREATE PROCEDURE ReturnBook (
     IN return_user_email VARCHAR(255),
-    IN return_book_id INT
+    IN return_book_id INT,
+	OUT ReturnBook_status BOOLEAN,
+    OUT ReturnBook_message VARCHAR(255)
 )
 BEGIN
     DECLARE loaned_book_count INT;
@@ -282,10 +293,11 @@ BEGIN
         UPDATE books SET book_stock_amount = book_stock_amount + 1 WHERE book_id = return_book_id;
         -- Remove entry from loaned_books table
         DELETE FROM loaned_books WHERE loan_user_mail = return_user_email AND loaned_book_id = return_book_id;
-        
-        SELECT 'Book returned successfully.' AS message;
+		SET ReturnBook_status = TRUE;
+		SET ReturnBook_message = 'Book returned successfully';
     ELSE
-        SELECT 'Book is not loaned out by the user.' AS message;
+        SET ReturnBook_status = TRUE;
+		SET ReturnBook_message = 'Book is not loaned out by the user.';
     END IF;
 END //
 
@@ -298,7 +310,7 @@ select * from loaned_books;
 CALL ReturnBook('ran_test@test.com',4);
 CALL ReturnBook('ran_test@test.com',2);
 CALL ReturnBook('ran_test@test.com',4);
-CALL LoanBook('barbar11@rty.com',4); -- problem with loaning book: doesn't write to loaned_books table because of a constraint but book_stock_amount decreases.
+CALL LoanBook('barbar11@rty.com',4); 
 CALL ReturnBook('barbar11@rty.com',4);
 -- ------------------------------------------------------------
 
@@ -327,22 +339,31 @@ CREATE PROCEDURE AddBook (
     IN new_book_name VARCHAR(255),
     IN new_author_name VARCHAR(255),
     IN new_genre_name VARCHAR(50),
-    IN new_stock_amount INT
+    IN new_stock_amount INT,
+	OUT AddBook_status BOOLEAN,
+    OUT AddBook_message VARCHAR(255)
 )
 BEGIN
     DECLARE book_exists INT;
     
-    -- Check if the book exists
-    SELECT COUNT(*) INTO book_exists FROM books WHERE book_name = new_book_name AND book_author_name = new_author_name;
-    
-    -- If the book exists, update the stock amount
-    IF book_exists > 0 THEN
-        UPDATE books SET book_stock_amount = book_stock_amount + new_stock_amount WHERE book_name = new_book_name AND author_name = new_author_name;
-        
+    IF new_stock_amount < 1 THEN
+		SET AddBook_status = FALSE;
+		SET AddBook_message = 'Book amount is wrong';
     ELSE
-        -- If the book doesn't exist, insert the new book
-        INSERT INTO books (book_name, book_author_name, book_genre_name, book_stock_amount) VALUES (new_book_name, new_author_name, new_genre_name, new_stock_amount);
-    END IF;
+		-- Check if the book exists
+		SELECT COUNT(*) INTO book_exists FROM books WHERE book_name = new_book_name AND book_author_name = new_author_name;
+		-- If the book exists, update the stock amount
+		IF book_exists > 0 THEN
+			UPDATE books SET book_stock_amount = book_stock_amount + new_stock_amount WHERE book_name = new_book_name AND author_name = new_author_name;
+			SET AddBook_status = TRUE;
+			SET AddBook_message = 'Book stock amount updated.';
+		ELSE
+			-- If the book doesn't exist, insert the new book
+			INSERT INTO books (book_name, book_author_name, book_genre_name, book_stock_amount) VALUES (new_book_name, new_author_name, new_genre_name, new_stock_amount);
+			SET AddBook_status = TRUE;
+			SET AddBook_message = 'Book added to library.';
+		END IF;
+	END IF;
 END //
 
 DELIMITER ;
@@ -371,7 +392,9 @@ CALL ShowLoanedBooks();
 DELIMITER //
 
 CREATE PROCEDURE RemoveUser (
-    IN remove_user_email VARCHAR(255)
+    IN remove_user_email VARCHAR(255),
+	OUT RemoveUser_status BOOLEAN,
+    OUT RemoveUser_message VARCHAR(255)
 )
 BEGIN
     DECLARE user_exists INT;
@@ -387,17 +410,19 @@ BEGIN
         IF loaned_book_count = 0 THEN
             -- Remove user
             DELETE FROM users WHERE user_email = remove_user_email;
-            
-            SELECT 'User removed successfully.' AS message;
+            SET RemoveUser_status = TRUE;
+			SET RemoveUser_message = 'User removed successfully.';
         ELSE
-            SELECT 'User has loaned books. Cannot remove user.' AS message;
+            SET RemoveUser_status = FALSE;
+			SET RemoveUser_message = 'User has loaned books. Cannot remove user.';
         END IF;
     ELSE
-        SELECT 'User does not exist.' AS message;
+        SET RemoveUser_status = FALSE;
+		SET RemoveUser_message = 'User does not exist.';
     END IF;
 END //
 
 DELIMITER ;
 
 select * from users;
-CALL RemoveUser('barbar11@rty.com');
+CALL RemoveUser('barbar12@rty.com');
