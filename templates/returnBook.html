@@ -6,11 +6,15 @@
     </head>
     <body>
     <h1>hello from return book</h1>
-    <h1>Select a book to return:</h1>
     <ul>
-        {% for book in books %}
-            <li>{{ book.book_id }} - {{ book.book_name }}</li>
-        {% endfor %}
+        {% if books|length == 0 %}
+        <h2>No books to return</h2>
+        {% else %}
+        <h2>Select a book to return:</h2>
+            {% for book in books %}
+                <li>{{ book.book_id }} - {{ book.book_name }}</li>
+            {% endfor %}
+        {% endif %}
     </ul>
 </body>
 </html>
