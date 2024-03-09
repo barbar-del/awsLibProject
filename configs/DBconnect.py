@@ -45,7 +45,7 @@ def SignupUser(email,name,password):
         connection.close()
         
 # call the sql function 'ShowAvailableBooks' 
-#will show all the available books (count if 1 or more in the stock)
+# will show all the available books (count if 1 or more in the stock)
 def show_available_books():
     from models.books import Books  # Import Books model here
 
@@ -107,7 +107,7 @@ def LoanBook(email, book_id):
         
         
 # function to return a spesific book to the library
-def LoanBook(email, book_id):
+def ReturnBook(email, book_id):
     connection = db.engine.raw_connection()
     try:
         cursor = connection.cursor()

@@ -2,6 +2,7 @@ from flask import Flask, redirect, render_template, request, url_for
 from configs.DBconnect import ShowUserLoanedBooks, init_db, login_user, SignupUser, show_available_books, getGenreNames
 from models.user import Users
 from models.books import Books
+from models.Genre import Genre
 
 app = Flask(__name__)
 
