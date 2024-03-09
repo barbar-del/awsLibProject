@@ -6,10 +6,10 @@ db = SQLAlchemy()
 def init_db(app):
     
     # bar sql
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:1234567890@localhost/awspro'
+    #app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:1234567890@localhost/awspro'
     
     # ran sql
-    #app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:T9QF1X@localhost/library_aws'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:T9QF1X@localhost/library_aws'
     
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.init_app(app)
@@ -134,3 +134,15 @@ def RemoveUser(email):
     finally:
         cursor.close()
         connection.close()
+
+
+def getGenreNames():
+  connection = db.engine.raw_connection()
+  try:
+    cursor = connection.cursor()
+    cursor.execute("SELECT genre_name FROM genre")
+    genres = [row[0] for row in cursor.fetchall()]  # List comprehension to extract genre names
+    return genres
+  finally:
+    cursor.close()
+    connection.close()
