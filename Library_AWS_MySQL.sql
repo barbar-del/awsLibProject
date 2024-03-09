@@ -136,7 +136,7 @@ select * from users
 -- PROCDURE TO SIGN UP USER
 
 DELIMITER //
-	
+
 CREATE PROCEDURE SignupUser (
     IN signup_email VARCHAR(255),
     IN new_user_name VARCHAR(255),
@@ -154,6 +154,14 @@ BEGIN
     THEN
 		SET signup_status = FALSE;
 		SET signup_status_message = 'Invalid email format';
+    ELSEIF new_user_name = ''
+	THEN
+		SET signup_status = FALSE;
+        SET signup_status_message = 'Name cannot be empty';
+	ELSEIF signup_password = ''
+	THEN
+		SET signup_status = FALSE;
+        SET signup_status_message = 'Password cannot be empty';
     ELSE
 		-- Check if the email exists
 		SELECT COUNT(*) INTO user_count FROM users WHERE user_email = signup_email;
@@ -170,8 +178,9 @@ BEGIN
 		END IF;
     END IF;
 END //
-	
+
 DELIMITER ;
+
 CALL SignupUser('ran_test444@test.com', 'ran444 test444', '444', @signup_status, @signup_status_message);
 select @signup_status, @signup_status_message;
 
