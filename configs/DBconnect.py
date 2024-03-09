@@ -137,11 +137,18 @@ def RemoveUser(email):
 
 
 def getGenreNames():
+  from models.Genre import Genre  # Import Genre model here
   connection = db.engine.raw_connection()
   try:
     cursor = connection.cursor()
-    cursor.execute("SELECT genre_name FROM genre")
-    genres = [row[0] for row in cursor.fetchall()]  # List comprehension to extract genre names
+    cursor.execute("SELECT * FROM genre")
+    result = cursor.fetchall()
+    genres = []  # List comprehension to extract genre names
+    for genre_name in result:
+        gen = Genre.query.filter_by(genre_name=genre_name[0]).first()
+        if gen is None:
+            gen = Genre(genre_name=genre_name[0])
+        genres.append(gen)
     return genres
   finally:
     cursor.close()

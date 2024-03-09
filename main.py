@@ -38,6 +38,10 @@ def rentBook(email):
     available_books = show_available_books()
     genres = getGenreNames()
     print(email)
+
+    print(available_books)
+    print(type(genres))
+    print(genres)
     return render_template('BookRent.html', books=available_books, email=email, genres=genres)
 
 

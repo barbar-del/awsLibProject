@@ -32,9 +32,10 @@
                 </div>
                 <div>
                     <label for="genre">Genre:</label>
-                    <select id="genre" name="genre">
-                        {% for genre_name in genre %}
-                        <option value="{{ genre_name }}">{{ genre_name }}</option>
+                    <select class="book-list">
+                        {% for gen in genres %}
+                        var i = 0;
+                        <option value= i >{{ gen.genre_name }}</option>
                         {% endfor %}
                     </select>
                 </div>
