@@ -1,5 +1,5 @@
 from flask import Flask, redirect, render_template, request, url_for
-from configs.DBconnect import ShowUserLoanedBooks, init_db, login_user, SignupUser, show_available_books
+from configs.DBconnect import ShowUserLoanedBooks, init_db, login_user, SignupUser, show_available_books, GetGenreNames
 from models.user import Users
 from models.books import Books
 
@@ -35,8 +35,9 @@ def admin(email):
 @app.route('/rent/<email>')
 def rentBook(email):
     available_books = show_available_books()
+    genres = GetGenreNames()
     print(email)
-    return render_template('BookRent.html', books=available_books, email=email)
+    return render_template('BookRent.html', books=available_books, email=email, genres=genres)
 
 
 @app.route('/return/<email>')
@@ -56,7 +57,7 @@ def lib(email):
 def login():
     email = request.form['logemail']
     password = request.form['logpass']
-    login_status, error_message,admin_status = login_user(email, password)
+    login_status, error_message, admin_status = login_user(email, password)
     if login_status:
         # check admin or user. if admin redirect to admin page
         if admin_status:
