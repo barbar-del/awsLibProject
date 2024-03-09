@@ -56,6 +56,7 @@ def login():
     password = request.form['logpass']
     login_status, error_message = login_user(email, password)
     if login_status:
+        #add a nother if to check admin or user. if admin redirect to admin page
         return redirect(url_for('lib',email=email))
     else:
         return render_template('auth.html', error=error_message)
@@ -76,6 +77,7 @@ def signup():
         return render_template('auth.html', error="Password and re-password do not match")
     login_status, error_message = SignupUser(email,name, password)
     if login_status:
+        # no need to check it's and admin. only a user can sign up admins are added manually in sql
         return redirect(url_for('lib',email=email))
     else:
         return render_template('auth.html', error=error_message)
