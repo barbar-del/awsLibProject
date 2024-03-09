@@ -27,7 +27,9 @@ def show_users():
 def auth():
     return render_template('auth.html')
 
-
+@app.route('/admin/<email>')
+def admin(email):
+    return render_template('admin.html',email=email)
 
 
 @app.route('/rent/<email>')
@@ -54,9 +56,12 @@ def lib(email):
 def login():
     email = request.form['logemail']
     password = request.form['logpass']
-    login_status, error_message = login_user(email, password)
+    login_status, error_message,admin_status = login_user(email, password)
     if login_status:
-        #add a nother if to check admin or user. if admin redirect to admin page
+        # check admin or user. if admin redirect to admin page
+        if admin_status:
+            return redirect(url_for('admin',email=email))
+        
         return redirect(url_for('lib',email=email))
     else:
         return render_template('auth.html', error=error_message)
