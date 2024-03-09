@@ -1,9 +1,17 @@
-drop table IF EXISTS loan_log;
 drop table IF EXISTS loaned_books;
 drop table IF EXISTS users;
 drop table IF EXISTS books;
 drop table IF EXISTS genre;
 
+drop procedure if exists AddBook;
+drop procedure if exists LoanBook;
+drop procedure if exists LoginUser;
+drop procedure if exists RemoveUser;
+drop procedure if exists ResetPassword;
+drop procedure if exists ReturnBook;
+drop procedure if exists ShowAvailableBooks;
+drop procedure if exists ShowLoanedBooks;
+drop procedure if exists ShowUserLoanedBooks;
 -- ===========================  ==================================
 
 -- 2 user types: librarian(admin), regular user
@@ -29,8 +37,14 @@ CREATE TABLE users (
   user_email VARCHAR(255) PRIMARY KEY,
   user_full_name varchar(255) NOT NULL,
   user_password VARCHAR(255) NOT NULL,
+  is_admin boolean default FALSE,
   CHECK (user_email LIKE '_%@_%._%')
   );
+-- ------------ create 2 admins ------------------------
+insert into users values
+('ran_admin@library.com', 'ran ran', '111', TRUE),
+('bar_admin@library.com', 'bar bar', '111', TRUE);
+-- ------------ END create 2 admins ------------------------
 
 -- Create table for book genres with name as the primary key
 CREATE TABLE genre (
@@ -124,9 +138,9 @@ END //
 
 DELIMITER ;
 
-CALL LoginUser('ran_test@test.com', '111', @login_status, @login_status_message);
+CALL LoginUser('ran_admin@library.com', '111', @login_status, @login_status_message);
 select @login_status, @login_status_message;
-CALL LoginUser('ran_test222@test.com', '224142', @login_status, @login_status_message);
+CALL LoginUser('ran_admin@library.com', '224142', @login_status, @login_status_message);
 select @login_status, @login_status_message;
 
 select * from users
@@ -136,7 +150,7 @@ select * from users
 -- PROCDURE TO SIGN UP USER
 
 DELIMITER //
-	
+
 CREATE PROCEDURE SignupUser (
     IN signup_email VARCHAR(255),
     IN new_user_name VARCHAR(255),
@@ -154,6 +168,14 @@ BEGIN
     THEN
 		SET signup_status = FALSE;
 		SET signup_status_message = 'Invalid email format';
+    ELSEIF new_user_name = ''
+	THEN
+		SET signup_status = FALSE;
+        SET signup_status_message = 'Name cannot be empty';
+	ELSEIF signup_password = ''
+	THEN
+		SET signup_status = FALSE;
+        SET signup_status_message = 'Password cannot be empty';
     ELSE
 		-- Check if the email exists
 		SELECT COUNT(*) INTO user_count FROM users WHERE user_email = signup_email;
@@ -170,9 +192,10 @@ BEGIN
 		END IF;
     END IF;
 END //
-	
+
 DELIMITER ;
-CALL SignupUser('ran_test444@test.com', 'ran444 test444', '444', @signup_status, @signup_status_message);
+
+CALL SignupUser('test@test2222.com222', 'asdf', '222', @signup_status, @signup_status_message);
 select @signup_status, @signup_status_message;
 
 select * from users
@@ -196,10 +219,17 @@ BEGIN
     SELECT COUNT(*) INTO user_exists FROM users WHERE user_email = reset_user_email;
     
     IF user_exists > 0 THEN
-        -- Update user's password
-        UPDATE users SET user_password = new_password WHERE user_email = reset_user_email;
-		SET reset_password_status = FALSE;
-        SET reset_password_message = 'Password reset successfully.' ;
+		IF new_password = ''
+        THEN
+			SET reset_password_status = FALSE;
+            SET reset_password_message = 'Password cannot be empty';
+        
+		ELSE
+			-- Update user's password
+			UPDATE users SET user_password = new_password WHERE user_email = reset_user_email;
+			SET reset_password_status = FALSE;
+			SET reset_password_message = 'Password reset successfully.' ;
+        END IF;
     ELSE
         SET reset_password_status = FALSE;
         SET reset_password_message = 'User does not exist.' ;
@@ -208,7 +238,8 @@ END //
 
 DELIMITER ;
 
-CALL ResetPassword('ran_test444@test.com', '999',  @reset_password_status, @reset_password_message);
+CALL ResetPassword('test@test2222.com222', '',  @reset_password_status, @reset_password_message);
+select @reset_password_status, @reset_password_message;
 select* from users;
 -- =========================================================================== 
 
@@ -273,7 +304,6 @@ select * from users;
 select * from books;
 select * from loaned_books;
 -- LOAN A BOOK
-call LoanBook('barbar11@rty.com',3,@a,@B);
 CALL LoanBook('ran_test@test.com',4);
 CALL LoanBook('ran_test@test.com',2);
 CALL LoanBook('ran_test@test.com',2);
@@ -331,14 +361,12 @@ CREATE PROCEDURE ShowUserLoanedBooks (
 )
 BEGIN
     -- Select all books loaned by the specified user
-    SELECT * FROM books b
-    join loaned_books lb on lb.loaned_book_id= b.book_id
-    where lb.loan_user_mail= show_user_email_loaned;
+    SELECT * FROM loaned_books WHERE loan_user_mail = show_user_email_loaned;
 END //
 
 DELIMITER ;
 
-CALL ShowUserLoanedBooks('barbar11@rty.com');
+CALL ShowUserLoanedBooks('ran_test@test.com');
 
 -- =============================== ADMIN PROCEDURES ===============================
 
@@ -357,15 +385,23 @@ CREATE PROCEDURE AddBook (
 BEGIN
     DECLARE book_exists INT;
     
-    IF new_stock_amount < 1 THEN
+    IF new_book_name = ''
+    THEN
 		SET AddBook_status = FALSE;
-		SET AddBook_message = 'Book amount is wrong';
+		SET AddBook_message = 'Book name is empty';
+    ELSEIF new_author_name = ''
+	THEN
+		SET AddBook_status = FALSE;
+		SET AddBook_message = 'Book Author is empty';
+    ELSEIF new_stock_amount < 1 THEN
+		SET AddBook_status = FALSE;
+		SET AddBook_message = 'Book amount must be > 0';
     ELSE
 		-- Check if the book exists
 		SELECT COUNT(*) INTO book_exists FROM books WHERE book_name = new_book_name AND book_author_name = new_author_name;
 		-- If the book exists, update the stock amount
 		IF book_exists > 0 THEN
-			UPDATE books SET book_stock_amount = book_stock_amount + new_stock_amount WHERE book_name = new_book_name AND author_name = new_author_name;
+			UPDATE books SET book_stock_amount = book_stock_amount + new_stock_amount WHERE book_name = new_book_name AND book_author_name = new_author_name;
 			SET AddBook_status = TRUE;
 			SET AddBook_message = 'Book stock amount updated.';
 		ELSE
@@ -379,7 +415,8 @@ END //
 
 DELIMITER ;
 
-CALL AddBook('Book1', 'Author1', 'Mystery', 57);
+CALL AddBook('book1', 'Author1', 'Mystery', 57, @AddBook_status, @AddBook_message);
+select @AddBook_status, @AddBook_message
 select * from books
 -- ------------------------------------
 
