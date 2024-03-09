@@ -30,17 +30,17 @@ def auth():
 
 
 
-@app.route('/rent/<mail>')
-def book_rent(email):
+@app.route('/rent/<email>')
+def rentBook(email):
     available_books = show_available_books()
     print(email)
     return render_template('BookRent.html', books=available_books, email=email)
 
 
-@app.route('/return/<mail>')
-def returnbook(mail):
-    rentedBooks = ShowUserLoanedBooks(mail)
-    print(mail)
+@app.route('/return/<email>')
+def returnbook(email):
+    rentedBooks = ShowUserLoanedBooks(email)
+    print(email)
     return render_template('returnBook.html', books=rentedBooks)
 
 @app.route('/lib/<email>')
@@ -76,7 +76,7 @@ def signup():
         return render_template('auth.html', error="Password and re-password do not match")
     login_status, error_message = SignupUser(email,name, password)
     if login_status:
-        return redirect('/user/' + email)
+        return redirect(url_for('lib',email=email))
     else:
         return render_template('auth.html', error=error_message)
 

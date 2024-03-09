@@ -29,6 +29,8 @@ def login_user(email, password):
         cursor.close()
         connection.close()
 
+# call the sql function 'SignupUser' with the email, name, and password
+# return the status and error message from the SQL function
 def SignupUser(email,name,password):
     connection = db.engine.raw_connection()
     try:
@@ -42,6 +44,8 @@ def SignupUser(email,name,password):
         cursor.close()
         connection.close()
         
+# call the sql function 'ShowAvailableBooks' 
+#will show all the available books (count if 1 or more in the stock)
 def show_available_books():
     from models.books import Books  # Import Books model here
 
@@ -62,7 +66,9 @@ def show_available_books():
     finally:
         cursor.close()
         connection.close()
-    
+
+# call the sql function 'ShowUserLoanedBooks'. 
+# return all the books that the user has loaned.
 def ShowUserLoanedBooks(mail):
     from models.books import Books  # Import Books model here
 
@@ -80,6 +86,51 @@ def ShowUserLoanedBooks(mail):
                                 book_genre_name=book_data[3], book_stock_amount=book_data[4])
             available_books.append(book)
         return available_books
+    finally:
+        cursor.close()
+        connection.close()
+
+
+# function to loand a spesific book to a user
+def LoanBook(email, book_id):
+    connection = db.engine.raw_connection()
+    try:
+        cursor = connection.cursor()
+        cursor.callproc('LoginUser', [email, book_id, None, None])
+        connection.commit()  # Make sure to commit the transaction
+        cursor.execute("SELECT @_LoanBook_2, @_LoanBook_3")  # Fetch the OUT parameters of the 2 and 3 index
+        login_status, LoanBook_message = cursor.fetchone()
+        return login_status, LoanBook_message
+    finally:
+        cursor.close()
+        connection.close()
+        
+        
+# function to return a spesific book to the library
+def LoanBook(email, book_id):
+    connection = db.engine.raw_connection()
+    try:
+        cursor = connection.cursor()
+        cursor.callproc('LoginUser', [email, book_id, None, None])
+        connection.commit()  # Make sure to commit the transaction
+        cursor.execute("SELECT @_LoanBook_2, @_LoanBook_3")  # Fetch the OUT parameters of the 2 and 3 index
+        ReturnBook_status, ReturnBook_message = cursor.fetchone()
+        return ReturnBook_status, ReturnBook_message
+    finally:
+        cursor.close()
+        connection.close()
+        
+# function to remove a user from the database
+#only the admin can do this    
+def RemoveUser(email):
+    connection = db.engine.raw_connection()
+    try:
+        cursor = connection.cursor()
+        cursor.callproc('LoginUser', [email, None, None])
+        connection.commit()  # Make sure to commit the transaction
+        cursor.execute("SELECT @_RemoveUser_1, @_RemoveUser_2")  # Fetch the OUT parameters of the 2 and 3 index
+        RemoveUser_status, RemoveUser_message = cursor.fetchone()
+        return RemoveUser_status, RemoveUser_message
     finally:
         cursor.close()
         connection.close()

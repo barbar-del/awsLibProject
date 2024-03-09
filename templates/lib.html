@@ -25,10 +25,10 @@
                         <a class="nav-link" href="{{ url_for('lib',email=email)}}">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('lib',email=email)}}">Book Rent</a>
+                        <a class="nav-link" href="{{ url_for('rentBook',email=email)}}">rent books</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('lib',email=email)}}">Users</a>
+                        <a class="nav-link" href="{{ url_for('returnbook',email=email)}}">return books</a>
                     </li>
                 </ul>
             </div>
@@ -74,7 +74,6 @@
             <span class="sr-only">Next</span>
         </a>
     </div>
-    <h1>{{xxx}}</h1>
     <!-- Welcome Sign -->
     <div class="container my-5">
         <div class="jumbotron">
