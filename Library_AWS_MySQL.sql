@@ -111,7 +111,8 @@ CREATE PROCEDURE LoginUser (
     IN login_email VARCHAR(255),
     IN login_password VARCHAR(255),
     OUT login_status BOOLEAN,
-    OUT login_status_message VARCHAR(255)
+    OUT login_status_message VARCHAR(255),
+    OUT is_admin_login BOOLEAN
 )
 BEGIN
     DECLARE user_count INT;
@@ -126,6 +127,8 @@ BEGIN
         IF password_matched THEN
             SET login_status = TRUE; -- Password matched, set login status to true
             SET login_status_message = 'Logged in successfuly!';
+            -- check if user is admin
+			SELECT is_admin into is_admin_login FROM users WHERE user_email = login_email;
         ELSE
             SET login_status = FALSE; -- Password doesn't match, set login status to false
             SET login_status_message = 'Incorrect password'; -- Set error message

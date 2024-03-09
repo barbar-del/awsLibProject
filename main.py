@@ -27,7 +27,9 @@ def show_users():
 def auth():
     return render_template('auth.html')
 
-
+@app.route('/admin/<email>')
+def admin(email):
+    return render_template('admin.html',email=email)
 
 
 @app.route('/rent/<email>')
@@ -54,8 +56,12 @@ def lib(email):
 def login():
     email = request.form['logemail']
     password = request.form['logpass']
-    login_status, error_message = login_user(email, password)
+    login_status, error_message,admin_status = login_user(email, password)
     if login_status:
+        # check admin or user. if admin redirect to admin page
+        if admin_status:
+            return redirect(url_for('admin',email=email))
+        
         return redirect(url_for('lib',email=email))
     else:
         return render_template('auth.html', error=error_message)
@@ -76,6 +82,7 @@ def signup():
         return render_template('auth.html', error="Password and re-password do not match")
     login_status, error_message = SignupUser(email,name, password)
     if login_status:
+        # no need to check it's and admin. only a user can sign up admins are added manually in sql
         return redirect(url_for('lib',email=email))
     else:
         return render_template('auth.html', error=error_message)

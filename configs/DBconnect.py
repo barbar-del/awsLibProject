@@ -20,11 +20,11 @@ def login_user(email, password):
     connection = db.engine.raw_connection()
     try:
         cursor = connection.cursor()
-        cursor.callproc('LoginUser', [email, password, None, None])
+        cursor.callproc('LoginUser', [email, password, None, None, None])
         connection.commit()  # Make sure to commit the transaction
-        cursor.execute("SELECT @_LoginUser_2, @_LoginUser_3")  # Fetch the OUT parameters of the 2 and 3 index
-        login_status, error_message = cursor.fetchone()
-        return login_status, error_message
+        cursor.execute("SELECT @_LoginUser_2, @_LoginUser_3, @_LoginUser_4")  # Fetch the OUT parameters of the 2 and 3 index
+        login_status, error_message,admin_status = cursor.fetchone()
+        return login_status, error_message, admin_status
     finally:
         cursor.close()
         connection.close()
