@@ -96,21 +96,16 @@ def signup():
 
 #######################################admin page############################################
 
-@app.route('/admin/<email>')
-def admin(email):
-    return render_template('admin.html',email=email)
 
 
-
-
-@app.route('/index')
-def index(email=None,status=None,error_message=None):
+@app.route('/admin')
+def admin(email=None,status=None,error_message=None):
     ganres = getGenreNames()
     users = Users.query.all()
     error_message = request.args.get('error_message')
     email=request.args.get('email')
     print(error_message)
-    return render_template('index.html', ganres=ganres, users=users, email=email, error_message=error_message)
+    return render_template('admin.html', ganres=ganres, users=users, email=email, error_message=error_message)
 
 @app.route('/call_function', methods=['POST'])
 def call_function():
@@ -126,24 +121,24 @@ def call_function():
         #CHECK THAT ALL THE FILEDS ARE FILLED
         if len(book_name) == 0 or len(author_name) == 0 or len(genre) == 0 or len(amount) == 0:
             print ('all fields are required\n')
-            return redirect(url_for('index', status=False, error_message="All fields are required"))
+            return redirect(url_for('admin', status=False, error_message="All fields are required"))
         #CHECK THAT THE AMOUNT IS A NUMBER AND GREATER THAN 0
         if not is_number(amount):
             print('amount is not a number\n')
-            return redirect(url_for('index', status=False, error_message="Amount should be 1 or more"))
+            return redirect(url_for('admin', status=False, error_message="Amount should be 1 or more"))
         if int(amount) >= 1:
             status, error_message = AddBook(book_name,author_name, genre,amount)
             print(status, error_message)
             print('book added\n')
-            return redirect(url_for( 'index', status=status, error_message=error_message))
+            return redirect(url_for( 'admin', status=status, error_message=error_message))
         print("was not able to add book\n")
-        return redirect(url_for('index', status=False, error_message="Something went wrong"))
+        return redirect(url_for('admin', status=False, error_message="Something went wrong"))
     
     
     elif func_name == 'deleteUser':
         print('function2')  # here i want to delete user
         status, error_message = RemoveUser(delete_user)
-        return redirect(url_for('index', status=status, error_message=error_message))
+        return redirect(url_for('admin', status=status, error_message=error_message))
         
         
         
