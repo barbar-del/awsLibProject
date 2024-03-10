@@ -126,7 +126,7 @@ def RemoveUser(email):
     connection = db.engine.raw_connection()
     try:
         cursor = connection.cursor()
-        cursor.callproc('LoginUser', [email, None, None])
+        cursor.callproc('RemoveUser', [email, None, None])
         connection.commit()  # Make sure to commit the transaction
         cursor.execute("SELECT @_RemoveUser_1, @_RemoveUser_2")  # Fetch the OUT parameters of the 2 and 3 index
         RemoveUser_status, RemoveUser_message = cursor.fetchone()

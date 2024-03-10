@@ -1,5 +1,5 @@
 from flask import Flask, redirect, render_template, request, url_for
-from configs.DBconnect import ShowUserLoanedBooks, init_db, login_user, SignupUser, show_available_books, getGenreNames
+from configs.DBconnect import AddBook, RemoveUser, ShowUserLoanedBooks, init_db, login_user, SignupUser, show_available_books, getGenreNames
 from models.user import Users
 from models.books import Books
 from models.Genre import Genre
@@ -104,12 +104,13 @@ def admin(email):
 
 
 @app.route('/index')
-def index():
+def index(email=None,status=None,error_message=None):
     ganres = getGenreNames()
     users = Users.query.all()
-
-    print(ganres)
-    return render_template('index.html', ganres=ganres, users=users)
+    error_message = request.args.get('error_message')
+    email=request.args.get('email')
+    print(error_message)
+    return render_template('index.html', ganres=ganres, users=users, email=email, error_message=error_message)
 
 @app.route('/call_function', methods=['POST'])
 def call_function():
@@ -119,11 +120,33 @@ def call_function():
     author_name = request.form['author_name']
     genre = request.form['genre']
     amount = request.form['amount']
-
+    delete_user= request.form['user_email']
     if func_name == 'newBook':
         print('function1')  # her i want to add new book
-    elif func_name == 'function2':
+        #CHECK THAT ALL THE FILEDS ARE FILLED
+        if len(book_name) == 0 or len(author_name) == 0 or len(genre) == 0 or len(amount) == 0:
+            print ('all fields are required\n')
+            return redirect(url_for('index', status=False, error_message="All fields are required"))
+        #CHECK THAT THE AMOUNT IS A NUMBER AND GREATER THAN 0
+        if not is_number(amount):
+            print('amount is not a number\n')
+            return redirect(url_for('index', status=False, error_message="Amount should be 1 or more"))
+        if int(amount) >= 1:
+            status, error_message = AddBook(book_name,author_name, genre,amount)
+            print(status, error_message)
+            print('book added\n')
+            return redirect(url_for( 'index', status=status, error_message=error_message))
+        print("was not able to add book\n")
+        return redirect(url_for('index', status=False, error_message="Something went wrong"))
+    
+    
+    elif func_name == 'deleteUser':
         print('function2')  # here i want to delete user
+        status, error_message = RemoveUser(delete_user)
+        return redirect(url_for('index', status=status, error_message=error_message))
+        
+        
+        
     # elif func_name == 'function3':
     #     print('function3')  #here i want to 
     # elif func_name == 'function4':
@@ -134,6 +157,12 @@ def call_function():
 
 
 
+def is_number(s):
+    try:
+        int(s)
+        return True
+    except ValueError:
+        return False
 
 
 

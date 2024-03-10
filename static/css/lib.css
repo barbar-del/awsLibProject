@@ -1,5 +1,51 @@
+@import url("https://fonts.googleapis.com/css?family=Raleway");
+
+body {
+  background-color: #948d8b;
+  font-family: "Raleway", sans-serif;
+}
+
 .carousel-caption {
-    background-color: rgba(0, 0, 0, 0.5);
-    padding: 20px;
-    border-radius: 5px;
+  background-color: rgba(50, 9, 25, 0.8);
+  padding: 20px;
+  border-radius: 5px;
+  color: #ffaf53;
+}
+
+.jumbotron {
+  background-color: #320919;
+  color: #ffaf53;
+}
+
+.jumbotron .btn-primary {
+  background-color: #ffaf53;
+  border-color: #ffaf53;
+  color: #320919;
+}
+
+.jumbotron .btn-primary:hover {
+  background-color: #ff9f23;
+  border-color: #ff9f23;
+}
+
+.card {
+  background-color: #320919;
+  color: #ffaf53;
+  border: none;
+}
+
+.card .card-body i {
+  color: #ffaf53;
+}
+
+footer {
+  background-color: #320919;
+}
+
+footer a {
+  color: #ffaf53;
+}
+
+footer a:hover {
+  color: #ff9f23;
 }
