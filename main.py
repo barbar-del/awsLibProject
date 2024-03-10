@@ -87,6 +87,28 @@ def signup():
     else:
         return render_template('auth.html', error=error_message)
 
+@app.route('/index')
+def index():
+    return render_template('index.html')
+
+@app.route('/call_function', methods=['POST'])
+def call_function():
+    func_name = request.form['func_name']
+    arg = request.form['arg']
+
+    if func_name == 'function1':
+        print('function1')
+    elif func_name == 'function2':
+        print('function2')
+    elif func_name == 'function3':
+        print('function3')
+    elif func_name == 'function4':
+        print('function4')
+
+    return f'{func_name} called with argument: {arg}'
+
+
+
 
 
 

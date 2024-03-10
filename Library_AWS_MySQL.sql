@@ -364,8 +364,9 @@ CREATE PROCEDURE ShowUserLoanedBooks (
 )
 BEGIN
     -- Select all books loaned by the specified user
-    SELECT * FROM loaned_books WHERE loan_user_mail = show_user_email_loaned;
-END //
+    SELECT * FROM books b
+    join loaned_books lb on lb.loaned_book_id= b.book_id
+    where lb.loan_user_mail= show_user_email_loaned;END //
 
 DELIMITER ;
 
@@ -426,7 +427,8 @@ select * from books
 -- PROCEDURE TO SHOW ALL LOAND BOOKS
 
 DELIMITER //
-
+--no reason to show it like this, if we want to show all loaned books atlest lets show who loaned it,
+--we want the books parameters and a the bottom say loand by: user email and user name
 CREATE PROCEDURE ShowLoanedBooks ()
 BEGIN
     -- Select all unique loaned books

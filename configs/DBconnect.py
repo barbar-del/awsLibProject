@@ -134,3 +134,18 @@ def RemoveUser(email):
     finally:
         cursor.close()
         connection.close()
+        
+        
+        
+def AddBook(new_book_name,new_author_name,new_genre_name,new_stock_amount):
+    connection = db.engine.raw_connection()
+    try:
+        cursor = connection.cursor()
+        cursor.callproc('AddBook', [new_book_name,new_author_name,new_genre_name,new_stock_amount, None, None])
+        connection.commit()  # Make sure to commit the transaction
+        cursor.execute("SELECT @_AddBook_4, @_AddBook_5")  # Fetch the OUT parameters of the 2 and 3 index
+        signUpStatus, error_message = cursor.fetchone()
+        return signUpStatus, error_message
+    finally:
+        cursor.close()
+        connection.close()
