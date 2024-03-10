@@ -1,15 +1,47 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <title>Buttons Page</title>
-</head>
-<body>
+  <head>
+    <title>admin tryout</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+
+  </head>
+
+  <body>
     <form action="/call_function" method="post">
-        <input type="hidden" name="arg" value="sweet">
-        <button type="submit" name="func_name" value="function1">Call Function 1</button>
-        <button type="submit" name="func_name" value="function2">Call Function 2</button>
-        <button type="submit" name="func_name" value="function3">Call Function 3</button>
-        <button type="submit" name="func_name" value="function4">Call Function 4</button>
+      <!-- Book Details -->
+      <label for="book_name">Book Name:</label>
+      <input type="text" name="book_name" id="book_name" required />
+
+      <label for="author_name">Author Name:</label>
+      <input type="text" name="author_name" id="author_name" required />
+
+      <label for="genre">Genre:</label>
+      <select name="genre" id="genre">
+        {% for gen in genres %}
+        <option value="{{ gen.genre_name }}">{{ gen.genre_name }}</option>
+        {% endfor %}
+      </select>
+
+      <label for="amount">Amount:</label>
+      <input type="text" name="amount" id="amount" required />
+
+      <button type="submit" name="func_name" value="newBook">
+        Add New Book
+      </button>
+
+      <!-- User Deletion -->
+      <label for="user_email">Choose User for Deletion:</label>
+      <select name="user_email" id="user_email">
+        {% for user in users %}
+        <option value="{{ user.user_email }}">
+          Email: {{ user.user_email }} | Name: {{ user.user_full_name }}
+        </option>
+        {% endfor %}
+      </select>
+
+      <button type="submit" name="func_name" value="deleteUser">
+        Delete User
+      </button>
     </form>
-</body>
+  </body>
 </html>

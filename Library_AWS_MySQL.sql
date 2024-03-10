@@ -425,10 +425,10 @@ select * from books
 -- ------------------------------------
 
 -- PROCEDURE TO SHOW ALL LOAND BOOKS
-
+-- no reason to show it like this, if we want to show all loaned books atlest lets show who loaned it,
+-- we want the books parameters and a the bottom say loand by: user email and user name
 DELIMITER //
---no reason to show it like this, if we want to show all loaned books atlest lets show who loaned it,
---we want the books parameters and a the bottom say loand by: user email and user name
+
 CREATE PROCEDURE ShowLoanedBooks ()
 BEGIN
     -- Select all unique loaned books
@@ -479,16 +479,3 @@ DELIMITER ;
 
 select * from users;
 CALL RemoveUser('barbar12@rty.com');
--- ----------------------------------------
-
--- Get Genres
-
-DELIMITER //
-
-CREATE PROCEDURE GetGenreNames()
-BEGIN
-        SELECT * FROM genre;
-END //
-
-DELIMITER ;
-CALL GetGenreNames();

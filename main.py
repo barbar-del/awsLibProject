@@ -23,14 +23,8 @@ def show_users():
 
 
 
-#registration from, latter will be change to  a path of '/' so it will be the default page
-@app.route('/')
-def auth():
-    return render_template('auth.html')
+####################################### pages withouth functions############################################
 
-@app.route('/admin/<email>')
-def admin(email):
-    return render_template('admin.html',email=email)
 
 
 @app.route('/rent/<email>')
@@ -54,6 +48,12 @@ def returnbook(email):
 @app.route('/lib/<email>')
 def lib(email):
     return render_template('lib.html',email=email)
+
+#######################################auth page############################################
+
+@app.route('/')
+def auth():
+    return render_template('auth.html')
 
 
 #handle the login form submission, and redirect to the user profile in case of success
@@ -93,25 +93,43 @@ def signup():
     else:
         return render_template('auth.html', error=error_message)
 
+
+#######################################admin page############################################
+
+@app.route('/admin/<email>')
+def admin(email):
+    return render_template('admin.html',email=email)
+
+
+
+
 @app.route('/index')
 def index():
-    return render_template('index.html')
+    ganres = getGenreNames()
+    users = Users.query.all()
+
+    print(ganres)
+    return render_template('index.html', ganres=ganres, users=users)
 
 @app.route('/call_function', methods=['POST'])
 def call_function():
     func_name = request.form['func_name']
     arg = request.form['arg']
+    book_name = request.form['book_name']
+    author_name = request.form['author_name']
+    genre = request.form['genre']
+    amount = request.form['amount']
 
-    if func_name == 'function1':
-        print('function1')
+    if func_name == 'newBook':
+        print('function1')  # her i want to add new book
     elif func_name == 'function2':
-        print('function2')
-    elif func_name == 'function3':
-        print('function3')
-    elif func_name == 'function4':
-        print('function4')
+        print('function2')  # here i want to delete user
+    # elif func_name == 'function3':
+    #     print('function3')  #here i want to 
+    # elif func_name == 'function4':
+    #     print('function4')
 
-    return f'{func_name} called with argument: {arg}'
+    return f'{func_name} called with book: {book_name}, author: {author_name}, genre: {genre}, amount: {amount}, arg: {arg}'
 
 
 
