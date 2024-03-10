@@ -479,3 +479,16 @@ DELIMITER ;
 
 select * from users;
 CALL RemoveUser('barbar12@rty.com');
+-- ----------------------------------------
+
+-- Get Genres
+
+DELIMITER //
+
+CREATE PROCEDURE GetGenreNames()
+BEGIN
+        SELECT * FROM genre;
+END //
+
+DELIMITER ;
+CALL GetGenreNames();

@@ -6,10 +6,10 @@ db = SQLAlchemy()
 def init_db(app):
     
     # bar sql
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:1234567890@localhost/awspro'
+    #app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:1234567890@localhost/awspro'
     
     # ran sql
-    #app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:T9QF1X@localhost/library_aws'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:T9QF1X@localhost/library_aws'
     
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.init_app(app)
@@ -45,7 +45,7 @@ def SignupUser(email,name,password):
         connection.close()
         
 # call the sql function 'ShowAvailableBooks' 
-#will show all the available books (count if 1 or more in the stock)
+# will show all the available books (count if 1 or more in the stock)
 def show_available_books():
     from models.books import Books  # Import Books model here
 
@@ -107,7 +107,7 @@ def LoanBook(email, book_id):
         
         
 # function to return a spesific book to the library
-def LoanBook(email, book_id):
+def ReturnBook(email, book_id):
     connection = db.engine.raw_connection()
     try:
         cursor = connection.cursor()
@@ -134,6 +134,26 @@ def RemoveUser(email):
     finally:
         cursor.close()
         connection.close()
+
+
+def getGenreNames():
+  from models.Genre import Genre  # Import Genre model here
+  connection = db.engine.raw_connection()
+  try:
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM genre")
+    result = cursor.fetchall()
+    genres = []  # List comprehension to extract genre names
+    for genre_name in result:
+        gen = Genre.query.filter_by(genre_name=genre_name[0]).first()
+        if gen is None:
+            gen = Genre(genre_name=genre_name[0])
+        genres.append(gen)
+    return genres
+  finally:
+    cursor.close()
+    connection.close()
+
         
         
         
@@ -149,3 +169,22 @@ def AddBook(new_book_name,new_author_name,new_genre_name,new_stock_amount):
     finally:
         cursor.close()
         connection.close()
+        
+
+def getGenreNames():
+  from models.Genre import Genre  # Import Genre model here
+  connection = db.engine.raw_connection()
+  try:
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM genre")
+    result = cursor.fetchall()
+    genres = []  # List comprehension to extract genre names
+    for genre_name in result:
+        gen = Genre.query.filter_by(genre_name=genre_name[0]).first()
+        if gen is None:
+            gen = Genre(genre_name=genre_name[0])
+        genres.append(gen)
+    return genres
+  finally:
+    cursor.close()
+    connection.close()
