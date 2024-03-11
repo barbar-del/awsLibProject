@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
   
     searchForm.addEventListener('submit', function(event) {
       event.preventDefault(); // Prevent default form submission
-  
+      console.log(genre);
       const formData = new FormData(searchForm);
       fetch(`/rent/${encodeURIComponent(searchForm.elements.email.value)}`, {
         method: 'POST',
