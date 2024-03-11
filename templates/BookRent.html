@@ -32,7 +32,7 @@
                 </div>
                 <div>
                     <label for="genre">Genre:</label>
-                    <select id="genre">
+                    <select name="genre" id="genre">
                         <option value="">Please Select Genre</option>
                         {% for gen in genres %}
                         <option value= "{{ gen.genre_name }}">{{ gen.genre_name }}</option>

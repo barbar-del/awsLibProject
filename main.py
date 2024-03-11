@@ -35,7 +35,7 @@ def rentBook(email):
     if request.method == 'POST':
         book_name = request.form.get('bookName', '').strip()
         author_name = request.form.get('bookAuthor', '').strip()
-        genre = request.form.get('genre', '').strip()
+        genre = request.form.get('genre', '')
         print(genre)
         searched_books = searchBook(book_name, author_name, genre)
         return render_template('BookRent.html', books=searched_books, email=email, genres=genres)
@@ -106,12 +106,12 @@ def signup():
 
 @app.route('/admin')
 def admin(email=None,status=None,error_message=None):
-    ganres = getGenreNames()
+    genres = getGenreNames()
     users = Users.query.all()
     error_message = request.args.get('error_message')
     email=request.args.get('email')
     print(error_message)
-    return render_template('admin.html', ganres=ganres, users=users, email=email, error_message=error_message)
+    return render_template('admin.html', genres=genres, users=users, email=email, error_message=error_message)
 
 @app.route('/call_function', methods=['POST'])
 def call_function():
