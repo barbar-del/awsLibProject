@@ -1,5 +1,5 @@
 from flask import Flask, redirect, render_template, request, url_for
-from configs.DBconnect import AddBook, RemoveUser, ShowUserLoanedBooks, init_db, login_user, SignupUser, show_available_books, getGenreNames
+from configs.DBconnect import AddBook, RemoveUser, ShowUserLoanedBooks, init_db, login_user, SignupUser, show_available_books, getGenreNames, searchBook
 from models.user import Users
 from models.books import Books
 from models.Genre import Genre
@@ -23,22 +23,28 @@ def show_users():
 
 
 
-####################################### pages withouth functions############################################
+####################################### pages without functions ############################################
 
 
-
-@app.route('/rent/<email>')
+# activate search button, loan button
+@app.route('/rent/<email>', methods=['GET', 'POST'])
 def rentBook(email):
     available_books = show_available_books()
     genres = getGenreNames()
-    print(email)
 
-    print(available_books)
-    print(type(genres))
-    print(genres)
+    if request.method == 'POST':
+        book_name = request.form.get('bookName', '').strip()
+        author_name = request.form.get('bookAuthor', '').strip()
+        genre = request.form.get('genre', '').strip()
+        print(genre)
+        searched_books = searchBook(book_name, author_name, genre)
+        return render_template('BookRent.html', books=searched_books, email=email, genres=genres)
+
+    print(email)
     return render_template('BookRent.html', books=available_books, email=email, genres=genres)
 
 
+# activate return button
 @app.route('/return/<email>')
 def returnbook(email):
     rentedBooks = ShowUserLoanedBooks(email)
@@ -49,7 +55,7 @@ def returnbook(email):
 def lib(email):
     return render_template('lib.html',email=email)
 
-#######################################auth page############################################
+####################################### auth page ############################################
 
 @app.route('/')
 def auth():
@@ -94,7 +100,7 @@ def signup():
         return render_template('auth.html', error=error_message)
 
 
-#######################################admin page############################################
+####################################### admin page ############################################
 
 
 

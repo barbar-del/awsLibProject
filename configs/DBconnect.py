@@ -6,10 +6,10 @@ db = SQLAlchemy()
 def init_db(app):
     
     # bar sql
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:1234567890@localhost/awspro'
+    #app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:1234567890@localhost/awspro'
     
     # ran sql
-    #app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:T9QF1X@localhost/library_aws'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:T9QF1X@localhost/library_aws'
     
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.init_app(app)
@@ -121,7 +121,7 @@ def ReturnBook(email, book_id):
         connection.close()
         
 # function to remove a user from the database
-#only the admin can do this    
+# only the admin can do this    
 def RemoveUser(email):
     connection = db.engine.raw_connection()
     try:
@@ -188,3 +188,26 @@ def getGenreNames():
   finally:
     cursor.close()
     connection.close()
+
+
+def searchBook(search_book_name, search_book_author, search_book_genre):
+    from models.books import Books  # Import Books model here
+
+    connection = db.engine.raw_connection()
+    try:
+        cursor = connection.cursor()
+        cursor.callproc('SearchBook', [search_book_name, search_book_author, search_book_genre])
+        print(search_book_name, search_book_author, search_book_genre)
+        result = cursor.fetchall()
+        searched_books = []
+        for book_data in result:
+            book = Books.query.filter_by(book_id=book_data[0]).first()
+            if book is None:
+                # Create a new Books instance if it doesn't exist
+                book = Books(book_id=book_data[0], book_name=book_data[1], book_author_name=book_data[2],
+                             book_genre_name=book_data[3], book_stock_amount=book_data[4])
+            searched_books.append(book)
+        return searched_books
+    finally:
+        cursor.close()
+        connection.close()
