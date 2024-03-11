@@ -19,7 +19,17 @@
     </header>
 
     <main>
+           <section>
+                <h2>Welcome, {{ email }}</h2>
+                <p>Search for books and borrow them to read.</p>       
         <section>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+              {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">{{ message }}</div>
+              {% endfor %}
+            {% endif %}
+          {% endwith %}
             <h2>Search Books</h2>
             <form method="post">
                 <div>
@@ -45,12 +55,14 @@
 
         <section>
             <h2>Available Books</h2>
-            <select class="book-list" multiple size="10">
-                {% for book in books %}
-                <option value="{{ book.book_id }}">{{ book.book_name }} - {{ book.book_author_name }}</option>
-                {% endfor %}
-            </select>
-            <button>Borrow Selected Books</button>
+            <form method="post" action="{{ url_for('rentBook', email=email) }}">
+                <select class="book-list" name="book_ids" multiple size="10">
+                    {% for book in books %}
+                    <option value="{{ book.book_id }}">{{ book.book_name }} - {{ book.book_author_name }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit" name="action" value="borrow">Borrow Selected Books</button>
+            </form>
         </section>
     </main>
 

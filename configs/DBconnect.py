@@ -91,16 +91,17 @@ def ShowUserLoanedBooks(mail):
         connection.close()
 
 
-# function to loand a spesific book to a user
+# function to loand a specific book to a user
 def LoanBook(email, book_id):
     connection = db.engine.raw_connection()
     try:
         cursor = connection.cursor()
-        cursor.callproc('LoginUser', [email, book_id, None, None])
+        cursor.callproc('LoanBook', [email, book_id, None, None])
         connection.commit()  # Make sure to commit the transaction
         cursor.execute("SELECT @_LoanBook_2, @_LoanBook_3")  # Fetch the OUT parameters of the 2 and 3 index
-        login_status, LoanBook_message = cursor.fetchone()
-        return login_status, LoanBook_message
+        LoanBook_status, LoanBook_message = cursor.fetchone()
+        print(LoanBook_status, LoanBook_message)
+        return LoanBook_status, LoanBook_message
     finally:
         cursor.close()
         connection.close()

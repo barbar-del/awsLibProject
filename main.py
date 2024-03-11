@@ -1,11 +1,11 @@
-from flask import Flask, redirect, render_template, request, url_for
-from configs.DBconnect import AddBook, RemoveUser, ShowUserLoanedBooks, init_db, login_user, SignupUser, show_available_books, getGenreNames, searchBook
+from flask import Flask, redirect, render_template, request, url_for, flash
+from configs.DBconnect import AddBook, RemoveUser, ShowUserLoanedBooks, init_db, login_user, SignupUser, show_available_books, getGenreNames, searchBook, LoanBook
 from models.user import Users
 from models.books import Books
 from models.Genre import Genre
 
 app = Flask(__name__)
-
+app.secret_key = 'secret'
 # Configure database connection
 
 
@@ -15,7 +15,7 @@ init_db(app)
 
 # Define your routes below
 
-#for debughing, remove later
+#for debugging, remove later
 @app.route('/users')
 def show_users():
     users = Users.query.all()
@@ -33,12 +33,22 @@ def rentBook(email):
     genres = getGenreNames()
 
     if request.method == 'POST':
-        book_name = request.form.get('bookName', '').strip()
-        author_name = request.form.get('bookAuthor', '').strip()
-        genre = request.form.get('genre', '')
-        print(genre)
-        searched_books = searchBook(book_name, author_name, genre)
-        return render_template('BookRent.html', books=searched_books, email=email, genres=genres)
+        action = request.form.get('action')
+        if action == 'borrow':
+            book_ids = request.form.getlist('book_ids')
+            for book_id in book_ids:
+                status, message = LoanBook(email, book_id)
+            if status:
+                flash(f'Book loaned successfully.', 'success')
+            else:
+                flash(f'Error: {message}', 'error')
+                
+        else:
+            book_name = request.form.get('bookName', '').strip()
+            author_name = request.form.get('bookAuthor', '').strip()
+            genre = request.form.get('genre', '')
+            searched_books = searchBook(book_name, author_name, genre)
+            return render_template('BookRent.html', books=searched_books, email=email, genres=genres)
 
     print(email)
     return render_template('BookRent.html', books=available_books, email=email, genres=genres)
