@@ -50,7 +50,6 @@ insert into users values
 CREATE TABLE genre (
   genre_name VARCHAR(50) PRIMARY KEY
 );
-
 -- Create table for books
 CREATE TABLE books (
   book_id INT PRIMARY KEY AUTO_INCREMENT,
@@ -79,7 +78,7 @@ INSERT INTO genre (genre_name) VALUES ('Mystery');
 INSERT INTO genre (genre_name) VALUES ('Sci-Fi');
 INSERT INTO genre (genre_name) VALUES ('Fantasy');
 
-select * from genre;
+select * from books;
 -- =========================== insert users ======================================
 insert into users (user_email, user_full_name, user_password) values
 ('barbar11@rty.com', 'bar yadgar1', '111'),
@@ -141,12 +140,12 @@ END //
 
 DELIMITER ;
 
-CALL LoginUser('ran_admin@library.com', '111', @login_status, @login_status_message);
-select @login_status, @login_status_message;
-CALL LoginUser('ran_admin@library.com', '224142', @login_status, @login_status_message);
-select @login_status, @login_status_message;
+CALL LoginUser('ran_admin@library.com', '111', @login_status, @login_status_message, @is_admin_login);
+select @login_status, @login_status_message, @is_admin_login;
+CALL LoginUser('barbar11@rty.com', '111', @login_status, @login_status_message, @is_admin_login);
+select @login_status, @login_status_message, @is_admin_login;
 
-select * from users
+select * from books
 
 -- ------------------------------------------------------------
 
@@ -252,7 +251,7 @@ select* from users;
 
 DELIMITER //
 
-CREATE PROCEDURE ShowAvailableBooks ()
+CREATE PROCEDURE ShowAvailableBooks()
 BEGIN
     -- Select all available books
     SELECT * FROM books WHERE book_stock_amount > 0;
@@ -307,7 +306,7 @@ select * from users;
 select * from books;
 select * from loaned_books;
 -- LOAN A BOOK
-CALL LoanBook('ran_test@test.com',4);
+CALL LoanBook('barbar11@rty.com',4, @LoanBook_status, @LoanBook_message);
 CALL LoanBook('ran_test@test.com',2);
 CALL LoanBook('ran_test@test.com',2);
 CALL LoanBook('barbar11@rty.com@test.com',4);
@@ -349,7 +348,7 @@ select * from users;
 select * from books;
 select * from loaned_books;
 -- LOAN A BOOK
-CALL ReturnBook('ran_test@test.com',4);
+CALL ReturnBook('barbar11@rty.com',4, @ReturnBook_status, @ReturnBook_message);
 CALL ReturnBook('ran_test@test.com',2);
 CALL ReturnBook('ran_test@test.com',4);
 CALL LoanBook('barbar11@rty.com',4); 
@@ -364,14 +363,13 @@ CREATE PROCEDURE ShowUserLoanedBooks (
 )
 BEGIN
     -- Select all books loaned by the specified user
-    SELECT * FROM books b
-    join loaned_books lb on lb.loaned_book_id= b.book_id
-    where lb.loan_user_mail= show_user_email_loaned;END //
+    SELECT * FROM loaned_books WHERE loan_user_mail = show_user_email_loaned;
+END //
 
 DELIMITER ;
 
 CALL ShowUserLoanedBooks('ran_test@test.com');
-
+select* from users
 -- =============================== ADMIN PROCEDURES ===============================
 
 -- PROCEDURE TO ADD BOOKS
@@ -425,8 +423,7 @@ select * from books
 -- ------------------------------------
 
 -- PROCEDURE TO SHOW ALL LOAND BOOKS
--- no reason to show it like this, if we want to show all loaned books atlest lets show who loaned it,
--- we want the books parameters and a the bottom say loand by: user email and user name
+
 DELIMITER //
 
 CREATE PROCEDURE ShowLoanedBooks ()
@@ -479,3 +476,29 @@ DELIMITER ;
 
 select * from users;
 CALL RemoveUser('barbar12@rty.com');
+
+-- ----------------------------------------
+
+-- Search Books
+
+DELIMITER //
+
+CREATE PROCEDURE SearchBook (
+    IN search_book_name VARCHAR(255),
+    IN search_book_author VARCHAR(255),
+    IN search_book_genre VARCHAR(255)
+)
+BEGIN
+	SELECT distinct book_id, book_name, book_author_name, book_genre_name
+    FROM books
+    WHERE ( (book_name LIKE CONCAT('%', search_book_name, '%') OR search_book_name IS NULL)
+			AND (book_author_name LIKE CONCAT('%', search_book_author, '%') OR search_book_author IS NULL)
+            AND (book_genre_name LIKE CONCAT('%', search_book_genre, '%') OR search_book_genre IS NULL));
+END //
+
+DELIMITER ;
+
+DROP PROCEDURE SearchBook;
+select* from books ;
+
+CALL SearchBook('','','');
