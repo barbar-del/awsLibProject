@@ -1,23 +1,20 @@
 @import url("https://fonts.googleapis.com/css?family=Raleway");
 
-/* General Styles */
 body {
-  background-color: #f6f6f6;
+  background-color: #948d8b;
   font-family: "Raleway", sans-serif;
-  color: #333;
 }
 
-/* Wrapper */
 .wrapper {
-  max-width: 400px;
+  width: 600px;
   margin: 50px auto;
   padding: 30px;
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background-color: #320919;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0px 0px 0.5px 0.5px rgba(255, 175, 83, 0.4);
 }
 
-/* Form Styles */
 .form-group {
   margin-bottom: 20px;
   position: relative;
@@ -28,58 +25,43 @@ body {
   top: 50%;
   left: 10px;
   transform: translateY(-50%);
-  color: #777;
+  color: #fff;
+  background-color: #ffaf53;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
+  text-align: center;
 }
 
 label {
   display: block;
   font-weight: 600;
   margin-bottom: 5px;
-  color: #555;
+  color: #ffaf53;
 }
 
-input {
+input,
+select {
   width: 100%;
   padding: 12px 12px 12px 40px;
-  border: 1px solid #ddd;
+  border: none;
   border-radius: 4px;
-  background-color: #f9f9f9;
-  color: #333;
-  transition: border-color 0.3s ease;
+  background-color: #4d3b3b; /* Changed the background color */
+  color: #e0e0e0; /* Changed the text color */
+  transition: background-color 0.3s ease;
 }
 
-input:focus {
+input:focus,
+select:focus {
   outline: none;
-  border-color: #ffaf53;
+  background-color: #5d4b4b; /* Changed the focus background color */
 }
 
 input::placeholder {
   color: #bbb;
 }
 
-/* Dropdown Styles */
-select {
-  width: 100%;
-  padding: 12px 40px 12px 12px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  background-color: #f9f9f9;
-  color: #333;
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M7 10l5 5 5-5H7z' fill='%23777'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 12px center;
-  background-size: 16px;
-}
-
-select:focus {
-  outline: none;
-  border-color: #ffaf53;
-}
-
-/* Button Styles */
 button[type="submit"] {
   display: block;
   width: 100%;
@@ -87,7 +69,7 @@ button[type="submit"] {
   border: none;
   border-radius: 4px;
   background-color: #ffaf53;
-  color: #fff;
+  color: #320919;
   text-transform: uppercase;
   font-weight: 600;
   transition: background-color 0.3s ease;
@@ -96,21 +78,4 @@ button[type="submit"] {
 
 button[type="submit"]:hover {
   background-color: #ff9f23;
-}
-
-/* Link */
-.info {
-  text-align: center;
-  margin-top: 20px;
-  color: #777;
-}
-
-.info a {
-  color: #ffaf53;
-  text-decoration: none;
-  font-weight: 600;
-}
-
-.info a:hover {
-  color: #ff9f23;
 }

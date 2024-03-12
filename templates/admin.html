@@ -1,54 +1,74 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>admin tryout</title>
+    <title>Admin Page</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
     <script src="{{ url_for('static', filename='script/general.js') }}" data-error-message="{{ error_message }}"></script>
-
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   </head>
 
   <body>
     <input type="hidden" id="error-message" value="{{ error_message|default('') }}">
 
-    <form action="/call_function" method="post">
-      <!-- Book Details -->
-      <label for="book_name">Book Name:</label>
-      <input type="text" name="book_name" id="book_name"  />
+    <div class="wrapper">
+      <form action="/call_function" method="post">
+        <div class="form-group">
+          <label for="book_name">Book Name:</label>
+          <div class="input-group">
+            <span class="form-icon"><i class="fas fa-book"></i></span>
+            <input type="text" name="book_name" id="book_name" placeholder="Enter book name" />
+          </div>
+        </div>
 
-      <label for="author_name">Author Name:</label>
-      <input type="text" name="author_name" id="author_name"  />
+        <div class="form-group">
+          <label for="author_name">Author Name:</label>
+          <div class="input-group">
+            <span class="form-icon"><i class="fas fa-user"></i></span>
+            <input type="text" name="author_name" id="author_name" placeholder="Enter author name" />
+          </div>
+        </div>
 
-      <label for="genre">Genre:</label>
-      <select name="genre" id="genre">
-        {% for gen in ganres %}
-        <option value="{{ gen.genre_name }}">{{ gen.genre_name }}</option>
-        {% endfor %}
-      </select>
-      <br><br>
-      <label for="amount">Amount:</label>
-      <input type="text" name="amount" id="amount"  />
+        <div class="form-group">
+          <label for="genre">Genre:</label>
+          <div class="input-group">
+            <span class="form-icon"><i class="fas fa-bookmark"></i></span>
+            <select name="genre" id="genre">
+              {% for gen in genres %}
+              <option value="{{ gen.genre_name }}">{{ gen.genre_name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
 
-      <button type="submit" name="func_name" value="newBook">
-        Add New Book
-      </button>
-      <br>
-      <br>
-      <!-- User Deletion -->
-      <label for="user_email">Choose User for Deletion:</label>
-      <select name="user_email" id="user_email">
-        {% for user in users %}
-        <option value="{{ user.user_email }}">
-          Email: {{ user.user_email }} | Name: {{ user.user_full_name }}
-        </option>
-        {% endfor %}
-      </select><br><br>
+        <div class="form-group">
+          <label for="amount">Amount:</label>
+          <div class="input-group">
+            <span class="form-icon"><i class="fas fa-hashtag"></i></span>
+            <input type="text" name="amount" id="amount" placeholder="Enter amount" />
+          </div>
+        </div>
 
-      <button type="submit" name="func_name" value="deleteUser">
-        Delete User
-      </button>
-      <input type="hidden" name="arg" value="your_argument_value"> 
+        <button type="submit" name="func_name" value="newBook">Add New Book</button>
+      </form>
 
-    </form>
+      <form action="/call_function" method="post">
+        <div class="form-group">
+          <label for="user_email">Choose User for Deletion:</label>
+          <div class="input-group">
+            <span class="form-icon"><i class="fas fa-user-times"></i></span>
+            <select name="user_email" id="user_email">
+              {% for user in users %}
+              <option value="{{ user.user_email }}">
+                Email: {{ user.user_email }} | Name: {{ user.user_full_name }}
+              </option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+
+        <button type="submit" name="func_name" value="deleteUser">Delete User</button>
+        <input type="hidden" name="arg" value="your_argument_value" />
+      </form>
+    </div>
   </body>
 </html>

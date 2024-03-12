@@ -6,10 +6,10 @@ db = SQLAlchemy()
 def init_db(app):
     
     # bar sql
-    #app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:1234567890@localhost/awspro'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:1234567890@localhost/awspro'
     
     # ran sql
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:T9QF1X@localhost/library_aws'
+    #app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:T9QF1X@localhost/library_aws'
     
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.init_app(app)
@@ -209,6 +209,26 @@ def searchBook(search_book_name, search_book_author, search_book_genre):
                              book_genre_name=book_data[3], book_stock_amount=book_data[4])
             searched_books.append(book)
         return searched_books
+    finally:
+        cursor.close()
+        connection.close()
+        
+        
+def getNotAdmins():
+    from models.user import Users  # Import Users model here
+    connection = db.engine.raw_connection()
+    try:
+        cursor = connection.cursor()
+        cursor.execute("SELECT * FROM users WHERE is_admin = FALSE;")
+        result = cursor.fetchall()
+        user_pool = []  # List to store user objects
+        for user_data in result:
+            user = Users.query.filter_by(user_email=user_data[0]).first()
+            if user is None:
+                user = Users(user_email=user_data[0], user_full_name=user_data[1],
+                             user_password=user_data[2], is_admin=user_data[3])
+            user_pool.append(user)
+        return user_pool
     finally:
         cursor.close()
         connection.close()
