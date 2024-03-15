@@ -77,4 +77,9 @@ Note that the exact syntax and capabilities may vary depending on your database 
 
 
 
+==========command to run===================
+pip install pymysql
+pip install flask
+pip install flask_sqlalchemy
 
+flask --app main run --debug

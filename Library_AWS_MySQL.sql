@@ -12,6 +12,8 @@ drop procedure if exists ReturnBook;
 drop procedure if exists ShowAvailableBooks;
 drop procedure if exists ShowLoanedBooks;
 drop procedure if exists ShowUserLoanedBooks;
+drop procedure if exists SignupUser;
+
 -- ===========================  ==================================
 
 -- 2 user types: librarian(admin), regular user
