@@ -36,6 +36,9 @@ def rentBook(email):
         action = request.form.get('action')
         if action == 'borrow':
             book_ids = request.form.getlist('book_ids')
+            if(len(book_ids) == 0):
+                flash(f'Please select a book to loan.', 'error')
+                return render_template('BookRent.html', books=show_available_books(), email=email, genres=genres)
             for book_id in book_ids:
                 status, message = LoanBook(email, book_id)
             if status:
@@ -62,6 +65,9 @@ def returnbook(email):
         action = request.form.get('action')
         if action == 'return':
             book_ids = request.form.getlist('book_ids')
+            if(len(book_ids) == 0):
+                flash(f'Please select a book to return.', 'error')
+                return render_template('returnBook.html', email = email, books=ShowUserLoanedBooks(email))
             for book_id in book_ids:
                 status, message = ReturnBook(email, book_id)
             if status:
