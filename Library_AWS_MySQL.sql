@@ -12,8 +12,6 @@ drop procedure if exists ReturnBook;
 drop procedure if exists ShowAvailableBooks;
 drop procedure if exists ShowLoanedBooks;
 drop procedure if exists ShowUserLoanedBooks;
-drop procedure if exists SignupUser;
-
 -- ===========================  ==================================
 
 -- 2 user types: librarian(admin), regular user
@@ -365,12 +363,16 @@ CREATE PROCEDURE ShowUserLoanedBooks (
 )
 BEGIN
     -- Select all books loaned by the specified user
-    SELECT * FROM loaned_books WHERE loan_user_mail = show_user_email_loaned;
+	SELECT lb.loan_user_mail, lb.loaned_book_id, b.book_name
+    FROM loaned_books lb
+    INNER JOIN books b ON lb.loaned_book_id = b.book_id
+    WHERE lb.loan_user_mail = show_user_email_loaned;
 END //
 
 DELIMITER ;
 
-CALL ShowUserLoanedBooks('ran_test@test.com');
+SELECT * FROM loaned_books;
+CALL ShowUserLoanedBooks('ppp@ppp.cmom');
 select* from users
 -- =============================== ADMIN PROCEDURES ===============================
 
@@ -504,3 +506,13 @@ DROP PROCEDURE SearchBook;
 select* from books ;
 
 CALL SearchBook('','','');
+
+
+select * from loaned_books;
+CALL ReturnBook('barbar11@rty.com',1, @a, @b);
+CALL ReturnBook('barbar11@rty.com',2, @a, @b);
+CALL ReturnBook('barbar11@rty.com',3, @a, @b);
+CALL ReturnBook('barbar11@rty.com',4, @a, @b);
+CALL ReturnBook('barbar11@rty.com',5, @a, @b);
+CALL ReturnBook('barbar11@rty.com',6, @a, @b);
+CALL ReturnBook('barbar11@rty.com',7, @a, @b);
