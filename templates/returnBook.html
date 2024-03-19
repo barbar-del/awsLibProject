@@ -1,20 +1,53 @@
-
 <!DOCTYPE html>
-<html>
-    <head>
-        <title>Return Book</title>
-    </head>
-    <body>
-    <h1>hello from return book</h1>
-    <ul>
-        {% if books|length == 0 %}
-        <h2>No books to return</h2>
-        {% else %}
-        <h2>Select a book to return:</h2>
-            {% for book in books %}
-                <li>{{ book.book_id }} - {{ book.book_name }}</li>
-            {% endfor %}
-        {% endif %}
-    </ul>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Book Search</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/BookRent.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Library Book Search</h1>
+        <nav>
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">Browse</a></li>
+                <li><a href="#">My Account</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+           <section>
+                <h2>Welcome, {{ email }}</h2>
+                <p>Please select a book to return.</p>       
+            </section>
+        <section>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+              {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">{{ message }}</div>
+              {% endfor %}
+            {% endif %}
+          {% endwith %}
+        </section>
+
+        <section>
+            <h2>Your Books</h2>
+            <form method="post" action="{{ url_for('returnbook', email=email) }}">
+                <select class="book-list" name="book_ids" multiple size="10">
+                    {% for book in books %}
+                    <option value="{{ book.book_id }}">{{ book.book_name }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit" name="action" value="return">Return Selected Books</button>
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2023 Library. All rights reserved.</p>
+    </footer>
 </body>
 </html>

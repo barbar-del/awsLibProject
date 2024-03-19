@@ -1,5 +1,5 @@
 from flask import Flask, redirect, render_template, request, url_for, flash
-from configs.DBconnect import AddBook, RemoveUser, ShowUserLoanedBooks, init_db, login_user, SignupUser, show_available_books, getGenreNames, searchBook, LoanBook,getNotAdmins
+from configs.DBconnect import AddBook, RemoveUser, ShowUserLoanedBooks, init_db, login_user, SignupUser, show_available_books, getGenreNames, searchBook, LoanBook,getNotAdmins, ReturnBook
 from models.user import Users
 from models.books import Books
 from models.Genre import Genre
@@ -51,15 +51,26 @@ def rentBook(email):
             return render_template('BookRent.html', books=searched_books, email=email, genres=genres)
 
     print(email)
-    return render_template('BookRent.html', books=available_books, email=email, genres=genres)
+    return render_template('BookRent.html', books=show_available_books(), email=email, genres=genres)
 
 
 # activate return button
-@app.route('/return/<email>')
+@app.route('/return/<email>', methods=['GET','POST'])
 def returnbook(email):
     rentedBooks = ShowUserLoanedBooks(email)
+    if request.method == 'POST':
+        action = request.form.get('action')
+        if action == 'return':
+            book_ids = request.form.getlist('book_ids')
+            for book_id in book_ids:
+                status, message = ReturnBook(email, book_id)
+            if status:
+                flash(f'Book returned successfully.', 'success')
+            else:
+                flash(f'Error: {message}', 'error')
+
     print(email)
-    return render_template('returnBook.html', books=rentedBooks)
+    return render_template('returnBook.html', email = email, books=ShowUserLoanedBooks(email))
 
 @app.route('/lib/<email>')
 def lib(email):

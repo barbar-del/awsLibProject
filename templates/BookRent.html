@@ -21,7 +21,8 @@
     <main>
            <section>
                 <h2>Welcome, {{ email }}</h2>
-                <p>Search for books and borrow them to read.</p>       
+                <p>Search for books and borrow them to read.</p>
+            </section>       
         <section>
             {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
