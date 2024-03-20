@@ -1,4 +1,4 @@
-from flask import Flask, redirect, render_template, request, url_for, flash
+from flask import Flask, redirect, render_template, request, session, url_for, flash
 from configs.DBconnect import AddBook, RemoveUser, ShowUserLoanedBooks, init_db, login_user, SignupUser, show_available_books, getGenreNames, searchBook, LoanBook,getNotAdmins, ReturnBook
 from models.user import Users
 from models.books import Books
@@ -135,8 +135,6 @@ def signup():
 
 ####################################### admin page ############################################
 
-
-
 @app.route('/admin')
 def admin(email=None,error_message=None):
     genres = getGenreNames()
@@ -196,6 +194,12 @@ def is_number(s):
         return True
     except ValueError:
         return False
+
+@app.route('/logout')
+def logout():
+    # Clear the user's session data
+    session.clear()
+    return redirect(url_for('auth'))
 
 
 

@@ -9,7 +9,9 @@
 
   <body>
     <input type="hidden" id="error-message" value="{{ error_message|default('') }}">
-
+    <div class="logout-section">
+      <a href="{{ url_for('logout') }}">Logout</a>
+    </div>
     <div class="wrapper">
       <form action="/call_function" method="post">
         <div class="form-group">

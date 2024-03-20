@@ -25,10 +25,13 @@
                         <a class="nav-link" href="{{ url_for('lib',email=email)}}">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('rentBook',email=email)}}">rent books</a>
+                        <a class="nav-link" href="{{ url_for('rentBook',email=email)}}">Rent Books</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('returnbook',email=email)}}">return books</a>
+                        <a class="nav-link" href="{{ url_for('returnbook',email=email)}}">Return Books</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
                     </li>
                 </ul>
             </div>

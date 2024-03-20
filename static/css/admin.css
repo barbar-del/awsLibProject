@@ -47,15 +47,15 @@ select {
   padding: 12px 12px 12px 40px;
   border: none;
   border-radius: 4px;
-  background-color: #4d3b3b; /* Changed the background color */
-  color: #e0e0e0; /* Changed the text color */
+  background-color: #4d3b3b;
+  color: #e0e0e0;
   transition: background-color 0.3s ease;
 }
 
 input:focus,
 select:focus {
   outline: none;
-  background-color: #5d4b4b; /* Changed the focus background color */
+  background-color: #5d4b4b;
 }
 
 input::placeholder {
@@ -77,5 +77,26 @@ button[type="submit"] {
 }
 
 button[type="submit"]:hover {
+  background-color: #ff9f23;
+}
+
+/* Styles for the logout button */
+.logout-section {
+  text-align: right;
+  margin-bottom: 20px;
+}
+
+.logout-section a {
+  display: inline-block;
+  padding: 8px 16px;
+  background-color: #ffaf53;
+  color: #320919;
+  text-decoration: none;
+  border-radius: 4px;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+
+.logout-section a:hover {
   background-color: #ff9f23;
 }
