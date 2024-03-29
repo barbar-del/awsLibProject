@@ -6,17 +6,16 @@ db = SQLAlchemy()
 def init_db(app):
     
     # bar sql
-    # app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:1234567890@localhost/awspro'
+    #app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:1234567890@localhost/awspro'
+    
     # ran sql
-    # app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:T9QF1X@localhost/library_aws'
-
-    # add server connection string here:
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:T9QF1X@localhost/library_aws'
     
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.init_app(app)
     
     
-# Call the SQL function 'LoginUser' with the email and password
+    # Call the SQL function 'LoginUser' with the email and password
 def login_user(email, password):
     connection = db.engine.raw_connection()
     try:
