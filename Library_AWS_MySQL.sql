@@ -78,7 +78,7 @@ insert into books (book_name, book_author_name, book_genre_name, book_stock_amou
 ('alibaba','barbur2','Fantasy',6),
 ('sodastream','barbur','Fantasy',1);
 
--- -- =========================== end inserts ===================================
+-- =========================== end inserts ===================================
 
 -- =========================== User Management ==================================
 
@@ -137,7 +137,6 @@ BEGIN
     DECLARE user_count INT;
     
     -- Check if the email matches the desired format
-   -- SET valid_email_format = FALSE; -- Assume invalid format by default
     
     IF signup_email NOT LIKE '_%@_%._%'
     THEN
@@ -206,7 +205,7 @@ BEGIN
         SET reset_password_message = 'User does not exist.' ;
     END IF;
 END //
-======================================================== 
+-- ======================================================== 
 
 -- ============================= BOOKS MANAGEMENT =============================
 
@@ -293,7 +292,7 @@ BEGIN
 END //
 
 DELIMITER ;
--------------------------------------
+-- -----------------------------------
 
 -- PROCDURE TO SHOW BOOKS LOANED BY SPECIFIC USER
 DELIMITER //
