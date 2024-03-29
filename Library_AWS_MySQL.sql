@@ -12,26 +12,10 @@ drop procedure if exists ReturnBook;
 drop procedure if exists ShowAvailableBooks;
 drop procedure if exists ShowLoanedBooks;
 drop procedure if exists ShowUserLoanedBooks;
--- ===========================  ==================================
+drop procedure if exists SearchBook;
+drop procedure if exists SignupUser;
 
--- 2 user types: librarian(admin), regular user
--- TO DO LIST:
--- DONE -- 1. update tables to match mysql
--- 2. update procedures to match mysql:
--- DONE 96 -- all users:	a. log in: check if email and password exists and match - return true/false
--- DONE 140 -- regular:    	b. sign up: check if email exists - if true - user exists, if false user not exist and create user.
--- DONE 213 -- all users:	c. show all available books: return all books with stock > 0
--- DONE 380 -- admin:		d. show all loaned books.
--- DONE 320 -- all users:	e. show user loaned books (per email).
--- DONE 227 -- regular:    	f. loan book: procudre to update stock amount and add value to loaned_books table (user mail and book id)
--- 								note: don't let user loan more than 1 copy
--- DONE 279-- regular:		g. return book: procudre to update stock amount and remove value from loaned_books table (user mail and book id)
--- 								note: check what we need to do if user has more than 1 copy of the same book.
--- DONE 338 -- admin:		h. add book: check if book exists (name, author genre) if true add to stock_amount if false add new.
--- DONE 394 -- admin:		i. remove user: check if user has no loaned books and remove.
--- DONE 177 -- all users:	j. reset password (per user)
-
--- ===========================  ==================================
+-- =============================================================
 
 CREATE TABLE users (
   user_email VARCHAR(255) PRIMARY KEY,
@@ -86,8 +70,6 @@ insert into users (user_email, user_full_name, user_password) values
 ('barbar13@rty.com', 'bar yadgar3', '333'),
 ('barbar14@rty.com', 'bar yadgar4', '444');
 
-select * from users;
-
 -- =========================== insert books ======================================
 
 insert into books (book_name, book_author_name, book_genre_name, book_stock_amount) values
@@ -95,8 +77,6 @@ insert into books (book_name, book_author_name, book_genre_name, book_stock_amou
 ('minime','barbur2','Fantasy',2),
 ('alibaba','barbur2','Fantasy',6),
 ('sodastream','barbur','Fantasy',1);
-
-select * from books;
 
 -- -- =========================== end inserts ===================================
 
@@ -139,13 +119,6 @@ BEGIN
 END //
 
 DELIMITER ;
-
-CALL LoginUser('ran_admin@library.com', '111', @login_status, @login_status_message, @is_admin_login);
-select @login_status, @login_status_message, @is_admin_login;
-CALL LoginUser('barbar11@rty.com', '111', @login_status, @login_status_message, @is_admin_login);
-select @login_status, @login_status_message, @is_admin_login;
-
-select * from books
 
 -- ------------------------------------------------------------
 
@@ -197,10 +170,6 @@ END //
 
 DELIMITER ;
 
-CALL SignupUser('test@test2222.com222', 'asdf', '222', @signup_status, @signup_status_message);
-select @signup_status, @signup_status_message;
-
-select * from users
 ------------------------------------------------------------
 
 -- PROCEDURE TO RESET USER PASSWORD
@@ -237,13 +206,7 @@ BEGIN
         SET reset_password_message = 'User does not exist.' ;
     END IF;
 END //
-
-DELIMITER ;
-
-CALL ResetPassword('test@test2222.com222', '',  @reset_password_status, @reset_password_message);
-select @reset_password_status, @reset_password_message;
-select* from users;
--- =========================================================================== 
+======================================================== 
 
 -- ============================= BOOKS MANAGEMENT =============================
 
@@ -258,8 +221,6 @@ BEGIN
 END //
 
 DELIMITER ;
-
-CALL ShowAvailableBooks();
 
 -- ------------------------------------------------------------
 
@@ -300,17 +261,6 @@ BEGIN
     END IF;
 END //
 
-DELIMITER ;
-
-select * from users;
-select * from books;
-select * from loaned_books;
--- LOAN A BOOK
-CALL LoanBook('barbar11@rty.com',4, @LoanBook_status, @LoanBook_message);
-CALL LoanBook('ran_test@test.com',2);
-CALL LoanBook('ran_test@test.com',2);
-CALL LoanBook('barbar11@rty.com@test.com',4);
-
 -- ------------------------------------------------------------
 
 -- RETURN A BOOK
@@ -343,17 +293,7 @@ BEGIN
 END //
 
 DELIMITER ;
-
-select * from users;
-select * from books;
-select * from loaned_books;
--- LOAN A BOOK
-CALL ReturnBook('barbar11@rty.com',4, @ReturnBook_status, @ReturnBook_message);
-CALL ReturnBook('ran_test@test.com',2);
-CALL ReturnBook('ran_test@test.com',4);
-CALL LoanBook('barbar11@rty.com',4); 
-CALL ReturnBook('barbar11@rty.com',4);
--- ------------------------------------------------------------
+-------------------------------------
 
 -- PROCDURE TO SHOW BOOKS LOANED BY SPECIFIC USER
 DELIMITER //
@@ -371,9 +311,6 @@ END //
 
 DELIMITER ;
 
-SELECT * FROM loaned_books;
-CALL ShowUserLoanedBooks('ppp@ppp.cmom');
-select* from users
 -- =============================== ADMIN PROCEDURES ===============================
 
 -- PROCEDURE TO ADD BOOKS
@@ -421,9 +358,6 @@ END //
 
 DELIMITER ;
 
-CALL AddBook('book1', 'Author1', 'Mystery', 57, @AddBook_status, @AddBook_message);
-select @AddBook_status, @AddBook_message
-select * from books
 -- ------------------------------------
 
 -- PROCEDURE TO SHOW ALL LOAND BOOKS
@@ -438,7 +372,6 @@ END //
 
 DELIMITER ;
 
-CALL ShowLoanedBooks();
 -- ----------------------------------------
 
 -- PROCEDURE TO REMOVE USER
@@ -478,9 +411,6 @@ END //
 
 DELIMITER ;
 
-select * from users;
-CALL RemoveUser('barbar12@rty.com');
-
 -- ----------------------------------------
 
 -- Search Books
@@ -501,18 +431,3 @@ BEGIN
 END //
 
 DELIMITER ;
-
-DROP PROCEDURE SearchBook;
-select* from books ;
-
-CALL SearchBook('','','');
-
-
-select * from loaned_books;
-CALL ReturnBook('barbar11@rty.com',1, @a, @b);
-CALL ReturnBook('barbar11@rty.com',2, @a, @b);
-CALL ReturnBook('barbar11@rty.com',3, @a, @b);
-CALL ReturnBook('barbar11@rty.com',4, @a, @b);
-CALL ReturnBook('barbar11@rty.com',5, @a, @b);
-CALL ReturnBook('barbar11@rty.com',6, @a, @b);
-CALL ReturnBook('barbar11@rty.com',7, @a, @b);
