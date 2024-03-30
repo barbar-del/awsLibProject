@@ -62,7 +62,6 @@ INSERT INTO genre (genre_name) VALUES ('Mystery');
 INSERT INTO genre (genre_name) VALUES ('Sci-Fi');
 INSERT INTO genre (genre_name) VALUES ('Fantasy');
 
-select * from books;
 -- =========================== insert users ======================================
 insert into users (user_email, user_full_name, user_password) values
 ('barbar11@rty.com', 'bar yadgar1', '111'),
