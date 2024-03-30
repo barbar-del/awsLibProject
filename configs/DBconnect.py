@@ -4,12 +4,8 @@ from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 #init the database connection
 def init_db(app):
+    # enter your sql connection string here:
     
-    # bar sql
-    #app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:1234567890@localhost/awspro'
-    
-    # ran sql
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:T9QF1X@localhost/library_aws'
     
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.init_app(app)
