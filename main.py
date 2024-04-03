@@ -15,12 +15,6 @@ init_db(app)
 
 # Define your routes below
 
-#for debugging, remove later
-@app.route('/users')
-def show_users():
-    users = Users.query.all()
-    return render_template('users.html', users=users)
-
 
 
 ####################################### pages without functions ############################################
